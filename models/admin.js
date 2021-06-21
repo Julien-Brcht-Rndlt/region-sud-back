@@ -100,25 +100,13 @@ const modifyAll = (id, {username, email, password}) => {
 
 const remove = (id) => {
     find(id).then((admin) => {
-        // refactor code four times here + in create method + modify.
-        let sql = 'SELECT * FROM admin WHERE username = ? OR email = ?';
-        connection.promise().query(sql, [username, email]).then(([results]) => {
-        if(!results.length){
-            if(results.filter((result) => result.username === username)){
-                return Promise.reject('USERNAME_DUPLICATE');
-            } else if(results.filter((result) => result.email === email)){
-                return Promise.reject('EMAIL_DUPLICATE');
-            }
-        }
-        sql = 'DELETE FROM admin WHERE id = ?';
+        const sql = 'DELETE FROM admin WHERE id = ?';
          return connection.promise.query(sql, [id]);
          }).catch((err) => {
              if(err === 'RESOURCE_NOT_FOUND'){
                  return Promise.reject(err);
              }
          });
-    });
-
 };
 
 const validation = ({ username, email, password }) => {
