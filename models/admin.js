@@ -138,5 +138,6 @@ module.exports = {
     find,
     create,
     modify,
+    modifyAll,
     remove,
 };
