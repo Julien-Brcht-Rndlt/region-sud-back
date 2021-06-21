@@ -111,7 +111,7 @@ const remove = (id) => {
             }
         }
         sql = 'DELETE FROM admin WHERE id = ?';
-         return connection.promise.query(sql, [{username, email, password}, id]);
+         return connection.promise.query(sql, [id]);
          }).catch((err) => {
              if(err === 'RESOURCE_NOT_FOUND'){
                  return Promise.reject(err);
