@@ -25,7 +25,7 @@ const create = ({username, email, password}) => {
     }
     let sql = 'SELECT * FROM admin WHERE username = ? OR email = ?';
     connection.promise().query(sql, [username, email]).then(([results]) => {
-        if(!results.length){
+        if(results.length){
             if(results.filter((result) => result.username === username)){
                 return Promise.reject('USERNAME_DUPLICATE');
             } else if(results.filter((result) => result.email === email)){
@@ -49,7 +49,7 @@ const modify = (id, {username, email, password}) => {
          // refactor code twice here + in create method.
          let sql = 'SELECT * FROM admin WHERE username = ? OR email = ?';
          connection.promise().query(sql, [username, email]).then(([results]) => {
-         if(!results.length){
+         if(results.length){
              if(results.filter((result) => result.username === username)){
                  return Promise.reject('USERNAME_DUPLICATE');
              } else if(results.filter((result) => result.email === email)){
@@ -80,7 +80,7 @@ const modifyAll = (id, {username, email, password}) => {
          // refactor code three times here + in create method + modify.
          let sql = 'SELECT * FROM admin WHERE username = ? OR email = ?';
          connection.promise().query(sql, [username, email]).then(([results]) => {
-         if(!results.length){
+         if(results.length){
              if(results.filter((result) => result.username === username)){
                  return Promise.reject('USERNAME_DUPLICATE');
              } else if(results.filter((result) => result.email === email)){
