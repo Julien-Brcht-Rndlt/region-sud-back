@@ -110,7 +110,7 @@ const remove = (id) => {
                 return Promise.reject('EMAIL_DUPLICATE');
             }
         }
-        sql = 'UPDATE admin SET ? WHERE id = ?';
+        sql = 'DELETE FROM admin WHERE id = ?';
          return connection.promise.query(sql, [{username, email, password}, id]);
          }).catch((err) => {
              if(err === 'RESOURCE_NOT_FOUND'){
