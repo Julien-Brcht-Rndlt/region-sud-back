@@ -7,39 +7,37 @@ const findAll = () => {
                 .then(([results]) => results);
 };
 
-const findId = (id) => {
+const find = (id) => {
     const sql = "SELECT * from themes WHERE id = ?";
     return connection.promise().query(sql, [id])
                 .then(([results]) => {
-                if (!results){
-                    return Promise.reject('RESOURCE_NOT_FOUND');
-                } else {
-                    return results[0];
-                }
+                    if (!results){
+                        return Promise.reject('RESOURCE_NOT_FOUND');
+                    } else {
+                        return results[0];
+                    }
                 })
 };
 
 const create = ({title, reference, icon}) => {
-    const sql = 'INSERT INTO themes (title, reference, icon) VALUES (?, ?,? )';
-    connection.promise().query(sql, [title, reference, icon]).then(([result]) => result);
+    const sql = 'INSERT INTO themes (title, reference, icon) VALUES (?, ?, ?)';
+    return connection.promise().query(sql, [title, reference, icon])
+                .then(([result]) => result);
 };
-
 
 const validation = ({title, reference, icon}) => {
     let validationErrors = null;
-    validationProps = {};
-    title && (validationProps['title'] = Joi.string().max(150).required());
-    reference && (validationProps['reference'] = Joi.string().max(25).required());
-  icon && (validationProps['icon'] = Joi.string().max(50).required());
-    validationErrors = Joi.object(validationProps)
-                        .validate({title, reference, icon},{ abortEarly: false })
-                        .error;
-            return validationErrors;
+    validationErrors = Joi.object({
+        title: Joi.string().max(150).required(),
+        reference: Joi.string().max(25).required(),
+        icon: Joi.string().max(50).required(),
+    }).validate({title, reference, icon},{ abortEarly: false }).error;
+    return validationErrors;
 } 
 
 
 module.exports = {
     findAll,
-    findId,
+    find,
     create,
 };
