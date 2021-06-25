@@ -1,8 +1,23 @@
 const evalRouter = require('express').Router();
 const Eval = require('../models/eval');
+const Event = require('../modals/event');
+const evalScoresBuild = require('utils').evalScoresBuild;
 
-evalRouter.get('/:evalId/events/:eventId/answers', (req, res) => {
-
+evalRouter.get('/events/:eventId/answers', (req, res) => {
+    const eventId = req.params.eventId;
+    Event.find(eventId)
+        .then((orgEvent) => {
+            orgEvent
+            Eval.findEventScores(eventId).then(([results]) => {
+                // build eval scores json object.
+            })
+            .catch((err) => {
+                res.status(500).json({ message: `Error while retrieving eval scores for event ${eventId} :${err.message}` });
+            });
+        })
+        .catch((err) => {
+            res.status(500).json({ message: `Error while retrieving event ${eventId} :${err.message}` });
+        });
 });
 
 module.exports = evalRouter;
