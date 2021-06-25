@@ -1,4 +1,5 @@
 const connection = require('../db-config');
+const Joi = require('joi');
 
 const findAll = () => {
     const sql = 'SELECT * FROM organization';
@@ -18,7 +19,7 @@ const find = (id) => {
                 });
 }
 
-const findByName = () => {
+const findByName = (orgName) => {
     const sql = 'SELECT * FROM organization WHERE orgName = ?';
     return connection.promise.query(sql,[orgName]).then(([results]) => {
         return results;
@@ -47,27 +48,22 @@ const modify = (id, {orgName, orgStaff}) => {
     if(validationErrors) {
         return Promise.reject('INVALID_DATA');
     }
-    find(id).then((organization) => {
-         // refactor code twice here + in create method.
-         let sql = 'SELECT * FROM organization WHERE orgName = ?';
-         connection.promise().query(sql, [prgName]).then(([results]) => {
-         if(results.length){
-             if(results.filter((result) => result.orgName === orgName)){
-                 return Promise.reject('ORG_NAME_DUPLICATE');
+    find(id).then(() => {
+         findByName(orgName).then((result) => {
+            if(results.lenght) {
+                 return Promise.reject('DUPLICATE_NAME');
              }
-         }
- 
-         sql = 'UPDATE organization SET ? WHERE id = ?';
-         const valuesToUpdate = {};
-         orgName && (valuesToUpdate['orgName'] = orgName);
-         orgStaff && (valuesToUpdate['orgStaff'] = orgStaff);
-         return connection.promise.query(sql, [{ ...admin, ...valuesToUpdate }, id]);
-         }).catch((err) => {
+        });
+        const sql = 'UPDATE organization SET ? WHERE id = ?';
+        const valuesToUpdate = {};
+        orgName && (valuesToUpdate['orgName'] = orgName);
+        orgStaff && (valuesToUpdate['orgStaff'] = orgStaff);
+        return connection.promise.query(sql, [{ ...admin, ...valuesToUpdate }, id]);
+        }).catch((err) => {
              if(err === 'RESOURCE_NOT_FOUND'){
                  return Promise.reject(err);
              }
-         });
-    });
+        });
 };
 
 // put 
@@ -77,28 +73,24 @@ const modifyAll = (id, {orgName, orgStaff}) => {
         return Promise.reject('INVALID_DATA');
     }
     find(id).then((organization) => {
-         // refactor code three times here + in create method + modify.
-         let sql = 'SELECT * FROM organization WHERE orgName = ?';
-         connection.promise().query(sql, [orgName]).then(([results]) => {
-         if(results.length){
-             if(results.filter((result) => result.orgName === orgName)){
-                 return Promise.reject('ORG_NAME_DUPLICATE');
-             }
-         }
- 
-         sql = 'UPDATE admin SET ? WHERE id = ?';
-         return connection.promise.query(sql, [{orgName, orgStaff}, id]);
-         }).catch((err) => {
-             if(err === 'RESOURCE_NOT_FOUND'){
-                 return Promise.reject(err);
-             }
-         });
+        // refactor code three times here + in create method + modify.
+        findByName(orgName).then((result) => {
+            if(results.lenght) {
+                 return Promise.reject('DUPLICATE_NAME');
+            }
+        });
+        sql = 'UPDATE admin SET ? WHERE id = ?';
+        return connection.promise.query(sql, [{orgName, orgStaff}, id]);
+    }).catch((err) => {
+        if(err === 'RESOURCE_NOT_FOUND'){
+            return Promise.reject(err);
+        }
     });
 };
 
 
 const remove = (id) => {
-    find(id).then((organization) => {
+    find(id).then(() => {
         const sql = 'DELETE FROM organization WHERE id = ?';
          return connection.promise.query(sql, [id]);
          }).catch((err) => {
@@ -117,20 +109,10 @@ const validation = ({ orgName, orgStaff }) => {
     return validationErrors;
 }
 
-/* const validation = ({ orgName, orgStaff }) => {
-    let validationErrors = null;
-    validationProps = {};
-    orgName && (validationProps['orgName'] = Joi.string().max(150).required());
-    orgStaff && (validationProps['orgStaff'] = Joi.number());
-    validationErrors = Joi.object(validationProps)
-            .validate({ orgName, orgStaff }, { abortEarly: false })
-            .error;
-    return validationErrors;
-} */
-
 module.exports = {
     findAll,
     find,
+    findByName,
     create,
     modify,
     modifyAll,
