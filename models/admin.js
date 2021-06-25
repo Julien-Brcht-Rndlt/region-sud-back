@@ -1,4 +1,5 @@
 const connection = require('../db-config');
+const Joi = require('joi');
 
 const findAll = () => {
     const sql = 'SELECT * FROM admin';
@@ -99,7 +100,7 @@ const modifyAll = (id, {username, email, password}) => {
 };
 
 const remove = (id) => {
-    find(id).then((admin) => {
+    find(id).then(() => {
         const sql = 'DELETE FROM admin WHERE id = ?';
          return connection.promise.query(sql, [id]);
          }).catch((err) => {
