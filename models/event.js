@@ -1,4 +1,5 @@
 const connection = require('../db-config.js');
+const Joi = require('joi');
 
 const findAll = () => {
     const sql = 'SELECT * FROM event';
@@ -18,22 +19,31 @@ const find = (id) => {
                 });
 }
 
+const findAllByOrg = (orgId) => {
+    const sql = 'SELECT * FROM event WHERE id_organization = ?';
+    return connection
+    .promise()
+    .query(sql, [orgId])
+    .then(([results]) => results);
+}
+
 const findByTitle = (title) => {
     const sql = 'SELECT * FROM event WHERE title = ?';
     return connection.promise.query(sql,[title]).then(([results]) => {
         return results;
     });
-}
+};
 
-const create = ({ title, address, loc, staff, startDate, endDate, activity, level }) => {
+// create event for an organization
+
+const create = ({ title, address, loc, staff, startDate, endDate, activity, level, orgId }) => {
     const validationErrors = validation({ title, address, loc, staff, startDate, endDate, activity, level });
     if(validationErrors){
         return Promise.reject('INVALID_DATA');
     }
-    const sql = 'INSERT INTO event (title, address, loc, staff, startDate, endDate, activity, level) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    connection.promise().query(sql,[title, address, loc, staff, startDate, endDate, activity, level])
-                        .then(([{insertId}]) => { insertId, title, address, loc, staff, startDate, endDate, activity, level });
-
+    const sql = 'INSERT INTO event (title, address, loc, staff, startDate, endDate, activity, level, id_organization) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    connection.promise().query(sql,[title, address, loc, staff, startDate, endDate, activity, level, orgId])
+                        .then(([{insertId}]) => { insertId, title, address, loc, staff, startDate, endDate, activity, level, orgId });
 };
 
 // patch
@@ -44,6 +54,7 @@ const modify = (id, { title, address, loc, staff, startDate, endDate, activity, 
     }
     find(id).then((event) => {
          sql = 'UPDATE event SET ? WHERE id = ?';
+
          const valuesToUpdate = {};
          title && (valuesToUpdate['title'] = title);
          address && (valuesToUpdate['address'] = address);
@@ -53,6 +64,7 @@ const modify = (id, { title, address, loc, staff, startDate, endDate, activity, 
          endDate && (valuesToUpdate['endDate'] = endDate);
          activity && (valuesToUpdate['activity'] = activity);
          level && (valuesToUpdate['level'] = level);
+
          return connection.promise.query(sql, [{ ...admin, ...valuesToUpdate }, id]);
          }).catch((err) => {
              if(err === 'RESOURCE_NOT_FOUND'){
@@ -107,6 +119,8 @@ const validation = ({ title, address, loc, staff, startDate, endDate, activity, 
 module.exports = {
     findAll,
     find,
+    findAllByOrg,
+    findByTitle,
     create,
     modify,
     modifyAll,
