@@ -1,5 +1,6 @@
 const connection = require('../db-config');
 const Joi = require('joi');
+const  = require('constants');
 
 const findAll = () => {
   const sql = 'SELECT * FROM faq';
@@ -11,7 +12,7 @@ const findAll = () => {
 const find = (id) => {
   const sql = 'SELECT * FROM faq WHERE id = ?';
     connection.promise().query(sql, [id])
-                .then(([result]) => {
+                .then(([results]) => {
                     if(!results.length) {
                         return Promise.reject('RESSOURCE_NOT_FOUND');
                     } else {
@@ -23,7 +24,7 @@ const find = (id) => {
 const create = ({ questionFaq , answerFaq  }) => {
     const validationErrors = validation({ questionFaq, answerFaq });
     if(validationErrors){
-        return Promise.reject('THE_QUESTION_ALREADY_EXISTS');
+        return Promise.reject(RESOURCE_DUPLICATE);
     };
     const sql = 'INSERT INTO faq (questionFaq, answerFaq) VALUE (?, ?)';
     connection.promise().query(sql, [questionFaq, answerFaq])
