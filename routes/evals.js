@@ -9,7 +9,8 @@ evalRouter.get('/events/:eventId/answers', (req, res) => {
         .then((orgEvent) => {
             orgEvent
             Eval.findEventScores(eventId).then(([results]) => {
-                // build eval scores json object.
+                const evalScoresEvent = evalScoresBuild(results);
+                res.status(200).json(evalScoresEvent);
             })
             .catch((err) => {
                 res.status(500).json({ message: `Error while retrieving eval scores for event ${eventId} :${err.message}` });
