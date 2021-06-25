@@ -4,7 +4,8 @@ const setupRoutes = (app) => {
     // add routes
     // app.use()
 
-    app.use('/emi/themes', themeRouter);
+    app.use('/emi/themes', themesRouter);
+    app.use('/emi/funnels', funnelsRouter);
 }
 
 module.exports = {
