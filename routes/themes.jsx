@@ -1,8 +1,6 @@
 const themeRouter = require('express').Router();
 const Theme = require('../models/theme');
 
-// ajouter les routes
-
 themeRouter.get('/', (req, res) => {
     Theme.findAll().then((themes) => res.status(200).json(themes))
             .catch((err) => res.status(500).send({ message: `Error retrieving faq: ${err.message}` }));

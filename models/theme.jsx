@@ -35,7 +35,6 @@ const validation = ({title, reference, icon}) => {
     return validationErrors;
 } 
 
-
 module.exports = {
     findAll,
     find,
