@@ -44,7 +44,7 @@
         currEvalAnswer = currEvalQuestion.answers[`${row.answer_id}`];
 
         if(!'should' in currEvalAnswer){
-            evalAnswers.currEvalTheme.currEvalQuestion.currEvalAnswer.should = [];
+            currEvalAnswer.should = [];
         }
         currEvalAnswer.should[`${row.recommandation.id}`] = {
             id: recommandation.id,
