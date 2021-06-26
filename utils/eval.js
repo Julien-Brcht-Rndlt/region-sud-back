@@ -4,15 +4,16 @@
  */
 const buildEvalScoresEvent = (rows) => {
     const evalScores = {
-        event_id: rows[0].id,
-        event_title: rows[0].title,
-        themes: []
+        themes: [],
     };
+
     rows.forEach(row => {
-        evalScores.themes[row.theme_id] = {
-            theme_id: row.theme_id,
+        evalScores.themes[`${row.theme_id}`] = {
+            id: row.theme_id,
+            title: row.theme_title,
+            icon: `/assets/theme-${row.theme_id}.png`,
             score: row.score,
-        }
+        };
     });
     return evalScores;
 };
