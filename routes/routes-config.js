@@ -9,6 +9,8 @@ const setupRoutes = (app) => {
     app.use('emi/events', eventRouter);
     app.use('emi/faq', faqRouter);
     app.use('emi/admin', adminRouter);
+    app.use('/emi/themes', themesRouter);
+    app.use('/emi/funnels', funnelsRouter);
 }
 
 module.exports = {
