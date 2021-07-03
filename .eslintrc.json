@@ -6,7 +6,7 @@
     "jest/globals": true
   },
   "parser": "babel-eslint",
-  "extends": ["airbnb-base", "prettier"],
+  "extends": ["airbnb-base"],
   "parserOptions": {
     "ecmaVersion": 12
   },
