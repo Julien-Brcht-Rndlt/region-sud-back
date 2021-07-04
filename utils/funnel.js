@@ -2,64 +2,67 @@
  * utils function to build the Funnel json content object from databases rows.
  * @rows list of rows (resultset)
  */
- const buildFunnelJSON = (rows) => {
-    const funnel = {
-        themes = [],
-    };
+const buildFunnelJSON = (rows) => {
+  const funnel = {
+    themes: [],
+  };
 
-    let currFunnelTheme = null;
-    let currFunnelQuestion = null;
-    let currFunnelAnswer = null;
+  let currFunnelTheme = null;
+  let currFunnelQuestion = null;
+  let currFunnelAnswer = null;
 
-    rows.forEach((row) => {
-        
-        if(!`${row.theme_id}` in funnel.themes){
-            funnel.themes[`${row.theme_id}`] = {
-                id: row.theme_id,
-                title: row.theme_title,
-                icon: `/assets/theme-${row.theme_id}.png`,
-            };
-        }
-        currFunnelTheme = funnel.themes[`${row.theme_id}`];
+  rows.forEach((row) => {
+    if (!funnel.themes.find((theme) => theme.id === row.theme_id)) {
+      funnel.themes.push({
+        id: row.theme_id,
+        title: row.theme_title,
+        icon: `/assets/theme-${row.theme_id}.png`,
+      });
+    }
+    currFunnelTheme = funnel.themes.find((theme) => theme.id === row.theme_id);
 
-        if(!'questions' in currFunnelTheme){
-            currFunnelTheme.questions = [];
-        }
-        if(!`${row.question_id}` in currFunnelTheme.questions){
-            currFunnelTheme.questions[`${row.question_id}`] = {
-                id: row.question_id,
-                title: row.question_title,
-            };
-        }
-        currFunnelQuestion = currFunnelTheme.questions[`${row.question_id}`];
+    if (!('questions' in currFunnelTheme)) {
+      currFunnelTheme.questions = [];
+    }
+    if (!currFunnelTheme.questions.find((question) => question.id === row.question_id)) {
+      currFunnelTheme.questions.push({
+        id: row.question_id,
+        title: row.question_title,
+        id_theme: row.id_theme,
+      });
+    }
+    currFunnelQuestion = currFunnelTheme.questions
+      .find((question) => question.id === row.question_id);
 
-        if(!'answers' in currFunnelQuestion){
-            currFunnelQuestion.answers = [];
-        }
-        if(!`${row.answer_id}` in currFunnelTheme.answers){
-            currFunnelQuestion.answers[`${row.answer_id}`] = {
-                id: row.answer_id,
-                label: row.answer_title,
-                weight: row.weight,
-                answ_type: row.answer_type,
-            };
-        }
-        currFunnelAnswer = currFunnelQuestion.answers[`${row.answer_id}`];
+    if (!('answers' in currFunnelQuestion)) {
+      currFunnelQuestion.answers = [];
+    }
+    if (!currFunnelQuestion.answers.find((answer) => answer.id === row.answer_id)) {
+      currFunnelQuestion.answers.push({
+        id: row.answer_id,
+        label: row.answer_title,
+        weight: row.weight,
+        answ_type: row.answer_type,
+        id_question: row.id_question,
+      });
+    }
+    currFunnelAnswer = currFunnelQuestion.answers.find((answer) => answer.id === row.answer_id);
 
-        if(!'should' in currFunnelAnswer){
-            currFunnelAnswer.should = [];
-        }
-        currFunnelAnswer.should[`${row.recommandation.id}`] = {
-            id: recommandation.id,
-            label: row.recommandation_label,
-            content: row.recommandation_content,
-            trigger_value: row.trigger_value,
-            trigger_max: row.trigger_max,
-        }
+    if (!('should' in currFunnelAnswer)) {
+      currFunnelAnswer.should = [];
+    }
+    currFunnelAnswer.should.push({
+      id: row.reco_id,
+      label: row.reco_label,
+      content: row.reco_content,
+      url: row.reco_url,
+      trigger_value: row.trigger_value,
+      trigger_max: row.trigger_max,
     });
-    return funnel;
- };
+  });
+  return funnel;
+};
 
- module.exports = {
-     buildFunnelJSON,
- }
+module.exports = {
+  buildFunnelJSON,
+};
