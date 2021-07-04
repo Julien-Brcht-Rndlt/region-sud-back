@@ -1,5 +1,13 @@
-/* const Joi = require('joi'); */
+const Joi = require('joi');
 const connection = require('../db-config');
+
+const validation = ({ title, reference, icon }) => {
+  const validationErrors = Joi.object({
+    title: Joi.string().max(150).required(),
+    icon: Joi.string().max(50).required(),
+  }).validate({ title, reference, icon }, { abortEarly: false }).error;
+  return validationErrors;
+};
 
 const findAll = () => {
   const sql = 'SELECT * FROM theme';
@@ -22,21 +30,15 @@ const find = (id) => {
     });
 };
 
-/* const validation = ({ title, reference, icon }) => {
-  let validationErrors = null;
-  validationErrors = Joi.object({
-    title: Joi.string().max(150).required(),
-    reference: Joi.string().max(25).required(),
-    icon: Joi.string().max(50).required(),
-  }).validate({ title, reference, icon }, { abortEarly: false }).error;
-  return validationErrors;
-}; */
-
-const create = ({ title, reference, icon }) => {
+const create = ({ title, icon }) => {
+  const validationErrors = validation({ title, icon });
+  if (validationErrors) {
+    return Promise.reject(new Error('INVALID_DATA'));
+  }
   const sql = 'INSERT INTO themes (title, reference, icon) VALUES (?, ?, ?)';
   return connection
     .promise()
-    .query(sql, [title, reference, icon])
+    .query(sql, [title, icon])
     .then(([result]) => result);
 };
 
