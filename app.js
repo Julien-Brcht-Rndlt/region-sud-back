@@ -1,11 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const connection = require('./db-config');
+const { setupRoutes } = require('./routes/routes-config');
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // TODO: configure cors
 app.use(cors());
+
+setupRoutes(app);
 
 connection.connect((err) => {
   if (err) {
