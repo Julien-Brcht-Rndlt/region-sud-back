@@ -1,13 +1,13 @@
-const adminRouteur = require('express').Router();
+const adminRouter = require('express').Router();
 const Admin = require('../models/admin');
 const { USERNAME_DUPLICATE, EMAIL_DUPLICATE, RESOURCE_NOT_FOUND } = require('../constants');
 
-adminRouteur.get('/', (req, res) => {
+adminRouter.get('/', (req, res) => {
   Admin.findAll().then((admins) => res.status(200).json(admins))
     .catch((err) => res.status(500).send(`Error from Admin : ${err.message}`));
 });
 
-adminRouteur.get('/:id', (req, res) => {
+adminRouter.get('/:id', (req, res) => {
   const adminId = req.params.id;
   Admin.find(adminId).then((admin) => {
     if (!admin) {
@@ -21,7 +21,7 @@ adminRouteur.get('/:id', (req, res) => {
     });
 });
 
-adminRouteur.post('/', (req, res) => {
+adminRouter.post('/', (req, res) => {
   const error = Admin.validate(req.body);
   if (error) {
     res.status(422).json({ message: `Invalid data: ${error}` });
@@ -59,7 +59,7 @@ adminRouteur.post('/', (req, res) => {
   }
 });
 
-adminRouteur.put('/:id', (req, res) => {
+adminRouter.put('/:id', (req, res) => {
   const error = Admin.validate(req.body);
   if (error) {
     res.status(422).json({ message: `Invalid data: ${error}` });
@@ -101,7 +101,7 @@ adminRouteur.put('/:id', (req, res) => {
   }
 });
 
-adminRouteur.patch('/:id', (req, res) => {
+adminRouter.patch('/:id', (req, res) => {
   const error = Admin.validate(req.body, false);
   if (error) {
     res.status(422).json({ message: `Invalid data: ${error}` });
@@ -132,7 +132,7 @@ adminRouteur.patch('/:id', (req, res) => {
   }
 });
 
-adminRouteur.delete('/:id', (req, res) => {
+adminRouter.delete('/:id', (req, res) => {
   const adminId = req.params.id;
   Admin.find(adminId).then((admin) => {
     if (!admin) {
@@ -150,4 +150,4 @@ adminRouteur.delete('/:id', (req, res) => {
     });
 });
 
-module.exports = adminRouteur;
+module.exports = adminRouter;
