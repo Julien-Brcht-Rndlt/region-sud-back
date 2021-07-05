@@ -9,8 +9,7 @@ const buildFunnelJSON = (rows) => {
 
   let currFunnelTheme = null;
   let currFunnelQuestion = null;
-  /* let currFunnelAnswer = null;
- */
+
   rows.forEach((row) => {
     if (!funnel.themes.find((theme) => theme.id === row.theme_id)) {
       funnel.themes.push({
@@ -46,20 +45,6 @@ const buildFunnelJSON = (rows) => {
         id_question: row.id_question,
       });
     }
-    /* currFunnelAnswer = currFunnelQuestion
-    .answers.find((answer) => answer.id === row.answer_id); */
-
-    /* if (!('should' in currFunnelAnswer)) {
-      currFunnelAnswer.should = [];
-    }
-    currFunnelAnswer.should.push({
-      id: row.reco_id,
-      label: row.reco_label,
-      content: row.reco_content,
-      url: row.reco_url,
-      trigger_value: row.trigger_value,
-      trigger_max: row.trigger_max,
-    }); */
   });
   return funnel;
 };
