@@ -4,6 +4,7 @@ const connection = require('./db-config');
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded());
 // TODO: configure cors
 app.use(cors());
 
