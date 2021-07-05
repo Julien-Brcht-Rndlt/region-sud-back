@@ -33,36 +33,31 @@ const create = ({ questionFaq, answerFaq }) => {
     .then(([{ insertId }]) => ({ insertId, questionFaq, answerFaq }));
 };
 
-/* const modify = (id, { questionFaq, answerFaq }) => {
-  const validationErrors = validation({ questionFaq, answerFaq });
-  if (validationErrors) {
-    return Promise.reject(new Error('CANT_CHANGE'));
-  }
-  return find(id).then(() => {
-    let sql = 'SELECT * FROM faq WHERE questionFaq = ?';
-    connection.promise().query(sql, [questionFaq]).then(([results]) => {
-      if (results.lenght) {
-        if (results.filter((result) => result.questionFaq === questionFaq)) {
-          return Promise.reject(new Error('QUESTION_DUPLICATE'));
-        }
-      }
-      sql = 'UPDATE faq SET ? WHERE id = ?';
-      return connection.promise.query(sql, [{ questionFaq, answerFaq }, id]);
-    }).catch((err) => Promise.reject(err));
-  });
-}; */
+// patch
+const modifyPatch = (id, valuesToUpdate) => {
+  const sql = 'UPDATE faq SET ? WHERE id = ?';
+  return connection.promise.query(sql, [valuesToUpdate, id]);
+};
 
-const remove = (id) => find(id).then(() => {
+// put
+const modify = (id, { questionFaq, answerFaq }) => {
+  const sql = 'UPDATE admin SET ? WHERE id = ?';
+  return connection.promise.query(sql,
+    [{ questionFaq, answerFaq }, id]);
+};
+
+const remove = (id) => {
   const sql = 'DELETE FROM faq WHERE id = ?';
   return connection.promise.query(sql, [id]);
-}).catch((err) => Promise.reject(err));
+};
 
 module.exports = {
   findAll,
   find,
   findByQuestion,
   create,
-  /* modify, */
+  modify,
+  modifyPatch,
   remove,
   validate,
 };
