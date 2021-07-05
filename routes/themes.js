@@ -8,14 +8,23 @@ themeRouter.get('/', (req, res) => {
 
 themeRouter.get('/:id', (req, res) => {
   const themeId = req.params.id;
-  Theme.findId(themeId).then((theme) => res.status(200).json(theme))
+  Theme.findId(themeId).then((theme) => {
+    if (!theme) {
+      res.status(404).json({ message: `Resource organization ${themeId} not found!` });
+    } else {
+      res.status(200).json(theme);
+    }
+  })
     .catch((err) => res.status(500).send({ message: `Error retrieving faq: ${err.message}` }));
 });
 
 themeRouter.post('/', (req, res) => {
-  Theme.create(req.body).then((result) => {
-    const themeId = result.insertId;
-    res.status(201).json({ id: themeId, ...req.body });
+  const error = Theme.validate(req.body);
+  if (error) {
+    res.status(422).json({ message: `INVALIDE_DATA: ${error}` });
+  }
+  Theme.create(req.body).then((theme) => {
+    res.status(201).json(theme);
   }).catch((err) => res.status(500).send({ message: `Error while creating theme ressource: ${err.message}` }));
 });
 

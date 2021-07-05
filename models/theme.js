@@ -1,12 +1,12 @@
 const Joi = require('joi');
 const connection = require('../db-config');
 
-const validation = ({ title, reference, icon }) => {
-  const validationErrors = Joi.object({
-    title: Joi.string().max(150).required(),
-    icon: Joi.string().max(50).required(),
+const validate = ({ title, reference, icon }, forCreation = true) => {
+  const presence = forCreation ? 'required' : 'optional';
+  return Joi.object({
+    title: Joi.string().max(150).presence(presence),
+    icon: Joi.string().max(50),
   }).validate({ title, reference, icon }, { abortEarly: false }).error;
-  return validationErrors;
 };
 
 const findAll = () => {
@@ -22,28 +22,24 @@ const find = (id) => {
   return connection
     .promise()
     .query(sql, [id])
-    .then(([results]) => {
-      if (!results) {
-        return Promise.reject(new Error('RESOURCE_NOT_FOUND'));
-      }
-      return results[0];
-    });
+    .then(([results]) => results[0]);
 };
 
 const create = ({ title, icon }) => {
-  const validationErrors = validation({ title, icon });
-  if (validationErrors) {
-    return Promise.reject(new Error('INVALID_DATA'));
-  }
-  const sql = 'INSERT INTO themes (title, reference, icon) VALUES (?, ?, ?)';
+  const sql = 'INSERT INTO themes (title, icon) VALUES (?, ?)';
   return connection
     .promise()
     .query(sql, [title, icon])
-    .then(([result]) => result);
+    .then(([{ insertId }]) => ({
+      id: insertId,
+      title,
+      icon,
+    }));
 };
 
 module.exports = {
   findAll,
   find,
   create,
+  validate,
 };
