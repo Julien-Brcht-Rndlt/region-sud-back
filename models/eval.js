@@ -1,12 +1,12 @@
-const connection = require('db-config');
+const connection = require('../db-config');
 
 const findEventScores = (id) => {
-    const sql = `SELECT FROM * FROM is_evaluated
+  const sql = `SELECT FROM * FROM is_evaluated
                 JOIN theme ON is_evaluated.id_theme = theme.id
                 WHERE event.id = ?
                 ORDER BY theme.id`;
 
-    return connection.promise().query(sql, [id]).then(([results]) => results);
+  return connection.promise().query(sql, [id]).then(([results]) => results);
 };
 
 const findEventAnswers = (id) => {
@@ -25,10 +25,30 @@ const findEventAnswers = (id) => {
   ORDER BY theme.id, question.id, answer.id, recommandation.id;
   `;
 
-    return connection.promise().query(sql, [id]).then(([results]) => results);
-}
+  return connection.promise().query(sql, [id]).then(([results]) => results);
+};
+
+const createThemeScore = (eventId, themeId, score) => {
+  const sql = 'INSERT INTO is_evaluated (id_event, id_theme, score) VALUES (?, ?, ?)';
+  return connection.promise().query(sql, [eventId, themeId, score])
+    .then(([result]) => {
+      console.log(result);
+      return { eventId, themeId, score };
+    });
+};
+
+const createEvalAnswer = (eventId, answerId, value) => {
+  const sql = 'INSERT INTO eval_answer (id_event, id_answer, answer_value) VALUES (?, ?, ?)';
+  return connection.promise().query(sql, [eventId, answerId, value])
+    .then(([result]) => {
+      console.log(result);
+      return { eventId, answerId, value };
+    });
+};
 
 module.exports = {
-    findEventScores,
-    findEventAnswers,
-}
+  findEventScores,
+  findEventAnswers,
+  createThemeScore,
+  createEvalAnswer,
+};
