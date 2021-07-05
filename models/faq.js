@@ -19,12 +19,7 @@ const findAll = () => {
 const find = (id) => {
   const sql = 'SELECT * FROM faq WHERE id = ?';
   return connection.promise().query(sql, [id])
-    .then(([results]) => {
-      if (!results.length) {
-        return Promise.reject(new Error('RESSOURCE_NOT_FOUND'));
-      }
-      return results;
-    });
+    .then(([results]) => results[0]);
 };
 
 const create = ({ questionFaq, answerFaq }) => {

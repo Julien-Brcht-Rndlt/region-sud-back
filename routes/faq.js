@@ -1,20 +1,26 @@
 const faqRouter = require('express').Router();
 const Faq = require('../models/faq');
 
-faqRouter.get('/emi/faq', (req, res) => {
+faqRouter.get('/', (req, res) => {
   Faq.findAll()
     .then((faq) => res.status(200).json(faq))
     .catch((err) => res.status(500).send(`Error retrieving faq: ${err.message}`));
 });
 
-faqRouter.get('/emi/faq/:id', (req, res) => {
+faqRouter.get('/:id', (req, res) => {
   const faqId = req.params.id;
   Faq.find(faqId)
-    .then((faq) => res.status(200).json(faq))
+    .then((faq) => {
+      if (!faq) {
+        res.status(404).json({ message: `Resource faq ${faqId} not found!` });
+      } else {
+        res.status(200).json(faq);
+      }
+    })
     .catch((err) => res.status(500).send(`Error retrieving faq (#${faqId}): ${err.message}`));
 });
 
-faqRouter.post('/faq', (req, res) => {
+faqRouter.post('/', (req, res) => {
   Faq.create()
     .then(([insertId]) => {
       res.status(201).json({ id: insertId, ...req.body });
