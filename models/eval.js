@@ -28,7 +28,17 @@ const findEventAnswers = (id) => {
   return connection.promise().query(sql, [id]).then(([results]) => results);
 };
 
+const createThemeScore = (eventId, themeId, score) => {
+  const sql = 'INSERT INTO is_evaluated (id_event, id_theme, score) VALUES (?, ?, ?)';
+  return connection.promise().query(sql, [eventId, themeId, score])
+    .then(([result]) => {
+      console.log(result);
+      return { eventId, themeId, score };
+    });
+};
+
 module.exports = {
   findEventScores,
   findEventAnswers,
+  createThemeScore,
 };
