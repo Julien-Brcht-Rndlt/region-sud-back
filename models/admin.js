@@ -62,10 +62,10 @@ const modifyPatch = (id, { username, email, password }) => {
     valuesToUpdate.username = username;
   }
   if (email) {
-    valuesToUpdate.username = email;
+    valuesToUpdate.email = email;
   }
   if (password) {
-    valuesToUpdate.username = password;
+    valuesToUpdate.password = password;
   }
   return connection.promise.query(sql, [valuesToUpdate, id]);
 };
