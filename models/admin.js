@@ -55,18 +55,8 @@ const create = ({ username, email, password }) => {
 };
 
 // patch
-const modifyPatch = (id, { username, email, password }) => {
+const modifyPatch = (id, valuesToUpdate) => {
   const sql = 'UPDATE admin SET ? WHERE id = ?';
-  const valuesToUpdate = {};
-  if (username) {
-    valuesToUpdate.username = username;
-  }
-  if (email) {
-    valuesToUpdate.email = email;
-  }
-  if (password) {
-    valuesToUpdate.password = password;
-  }
   return connection.promise.query(sql, [valuesToUpdate, id]);
 };
 
