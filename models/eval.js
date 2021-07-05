@@ -28,7 +28,27 @@ const findEventAnswers = (id) => {
   return connection.promise().query(sql, [id]).then(([results]) => results);
 };
 
+const createThemeScore = (eventId, themeId, score) => {
+  const sql = 'INSERT INTO is_evaluated (id_event, id_theme, score) VALUES (?, ?, ?)';
+  return connection.promise().query(sql, [eventId, themeId, score])
+    .then(([result]) => {
+      console.log(result);
+      return { eventId, themeId, score };
+    });
+};
+
+const createEvalAnswer = (eventId, answerId, value) => {
+  const sql = 'INSERT INTO eval_answer (id_event, id_answer, answer_value) VALUES (?, ?, ?)';
+  return connection.promise().query(sql, [eventId, answerId, value])
+    .then(([result]) => {
+      console.log(result);
+      return { eventId, answerId, value };
+    });
+};
+
 module.exports = {
   findEventScores,
   findEventAnswers,
+  createThemeScore,
+  createEvalAnswer,
 };
