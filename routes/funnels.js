@@ -1,6 +1,6 @@
 const funnelRouter = require('express').Router();
 const Funnel = require('../models/funnel');
-const { buildFunnelJSON } = require('../utils/funnel').buildFunnel;
+const { buildFunnelJSON } = require('../utils/funnel');
 
 funnelRouter.get('/funnel', (req, res) => {
   Funnel.find().then(([results]) => {
@@ -9,6 +9,7 @@ funnelRouter.get('/funnel', (req, res) => {
   })
     .catch((err) => {
       res.status(500).json({ message: `Error retrieving funnel: ${err.message}` });
+      console.error(err);
     });
 });
 
