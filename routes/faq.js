@@ -1,5 +1,6 @@
 const faqRouter = require('express').Router();
 const Faq = require('../models/faq');
+const { RESOURCE_DUPLICATE } = require('../constants');
 
 faqRouter.get('/', (req, res) => {
   Faq.findAll()
@@ -21,19 +22,27 @@ faqRouter.get('/:id', (req, res) => {
 });
 
 faqRouter.post('/', (req, res) => {
-  Faq.create()
-    .then(([insertId]) => {
-      res.status(201).json({ id: insertId, ...req.body });
-    })
-    .catch((err) => {
-      if (err === 'DUPLICATE_QUESTION') {
-        res.status(409).json({ message: 'This question already exist' });
-      } else if (err === 'INVALIDE_DATA') {
-        res.status(422).json({ message: 'INVALIDE_DATA' });
-      } else {
-        res.status(500).send('Error saving content');
-      }
-    });
+  const error = Faq.validate(req.body);
+  if (error) {
+    res.status(422).json({ message: `Invalid data: ${error}` });
+  } else {
+    const { question, response } = req.body;
+    Faq.findByQuestion(question)
+      .then((results) => {
+        if (results) {
+          return Promise.reject(new Error(RESOURCE_DUPLICATE));
+        }
+        return Faq.create({ question, response });
+      })
+      .then((faq) => res.status(201).json(faq))
+      .catch((err) => {
+        if (err === RESOURCE_DUPLICATE) {
+          res.status(409).json({ message: 'This question already exist' });
+        } else {
+          res.status(500).send('Error saving content');
+        }
+      });
+  }
 });
 faqRouter.put('/:id', (req, res) => {
   const faqId = req.params.id;
