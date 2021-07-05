@@ -55,76 +55,31 @@ const create = ({ username, email, password }) => {
 };
 
 // patch
-/* const modify = (id, { username, email, password }) => {
-  const validationErrors = validation({ username, email, password });
-  if (validationErrors) {
-    return Promise.reject(new Error('INVALID_DATA'));
+const modifyPatch = (id, { username, email, password }) => {
+  const sql = 'UPDATE admin SET ? WHERE id = ?';
+  const valuesToUpdate = {};
+  if (username) {
+    valuesToUpdate.username = username;
   }
-  return find(id).then((admin) => {
-    // refactor code twice here + in create method.
-    let sql = 'SELECT * FROM admin WHERE username = ? OR email = ?';
-    connection
-      .promise()
-      .query(sql, [username, email])
-      .then(([results]) => {
-        if (results.length) {
-          if (results.filter((result) => result.username === username)) {
-            return Promise.reject(new Error('USERNAME_DUPLICATE'));
-          }
-          if (results.filter((result) => result.email === email)) {
-            return Promise.reject(new Error('EMAIL_DUPLICATE'));
-          }
-        }
-
-        sql = 'UPDATE admin SET ? WHERE id = ?';
-        const valuesToUpdate = { username, email, password };
-        return connection.promise.query(sql, [
-          { ...admin, ...valuesToUpdate },
-          id,
-        ]);
-      })
-      .catch((err) => Promise.reject(err));
-  });
+  if (email) {
+    valuesToUpdate.username = email;
+  }
+  if (password) {
+    valuesToUpdate.username = password;
+  }
+  return connection.promise.query(sql, [valuesToUpdate, id]);
 };
 
-const modifyAll = (id, { username, email, password }) => {
-  const validationErrors = validation({ username, email, password });
-  if (validationErrors) {
-    return Promise.reject(new Error('INVALID_DATA'));
-  }
-  return find(id).then(() => {
-    // refactor code three times here + in create method + modify.
-    let sql = 'SELECT * FROM admin WHERE username = ? OR email = ?';
-    connection
-      .promise()
-      .query(sql, [username, email])
-      .then(([results]) => {
-        if (results.length) {
-          if (results.filter((result) => result.username === username)) {
-            return Promise.reject(new Error('USERNAME_DUPLICATE'));
-          }
-          if (results.filter((result) => result.email === email)) {
-            return Promise.reject(new Error('EMAIL_DUPLICATE'));
-          }
-        }
-
-        sql = 'UPDATE admin SET ? WHERE id = ?';
-        return connection.promise.query(sql, [
-          { username, email, password },
-          id,
-        ]);
-      })
-      .catch((err) => Promise.reject(err));
-  });
-}; */
+// put
+const modify = (id, { username, email, password }) => {
+  const sql = 'UPDATE admin SET ? WHERE id = ?';
+  const valuesToUpdate = { username, email, password };
+  return connection.promise.query(sql, [valuesToUpdate, id]);
+};
 
 const remove = (id) => {
-  find(id)
-    .then(() => {
-      const sql = 'DELETE FROM admin WHERE id = ?';
-      return connection.promise.query(sql, [id]);
-    })
-    .catch((err) => Promise.reject(err));
+  const sql = 'DELETE FROM admin WHERE id = ?';
+  return connection.promise.query(sql, [id]);
 };
 
 module.exports = {
@@ -132,8 +87,8 @@ module.exports = {
   findMany,
   find,
   create,
-  /*  modify,
-  modifyAll, */
+  modify,
+  modifyPatch,
   remove,
   validate,
 };
