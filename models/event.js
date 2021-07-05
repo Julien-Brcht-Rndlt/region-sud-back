@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const connection = require('../db-config');
 
-const validation = ({
+const validate = ({
   title,
   address,
   loc,
@@ -10,11 +10,12 @@ const validation = ({
   endDate,
   activity,
   level,
-}) => {
-  const validationErrors = Joi.object({
-    title: Joi.string().max(150).required(),
-    address: Joi.string().required(),
-    loc: Joi.string().required(),
+}, forCreation = true) => {
+  const presence = forCreation ? 'required' : 'optional';
+  return Joi.object({
+    title: Joi.string().max(150).presence(presence),
+    address: Joi.string().presence(presence),
+    loc: Joi.string().presence(presence),
     staff: Joi.number(),
     startDate: Joi.date(),
     endDate: Joi.date(),
@@ -23,7 +24,6 @@ const validation = ({
   }).validate({
     title, address, loc, staff, startDate, endDate, activity, level,
   }, { abortEarly: false }).error;
-  return validationErrors;
 };
 
 const findAll = () => {
@@ -33,12 +33,7 @@ const findAll = () => {
 
 const find = (id) => {
   const sql = 'SELECT * FROM event WHERE id = ?';
-  connection.promise().query(sql, [id]).then(([results, err]) => {
-    if (!results.length || err) {
-      return Promise.reject(new Error('RESOURCE_NOT_FOUND'));
-    }
-    return results[0];
-  });
+  return connection.promise().query(sql, [id]).then((results) => results[0]);
 };
 
 const findAllByOrg = (orgId) => {
@@ -68,26 +63,13 @@ const create = ({
   level,
   orgId,
 }) => {
-  const validationErrors = validation({
-    title,
-    address,
-    loc,
-    staff,
-    startDate,
-    endDate,
-    activity,
-    level,
-  });
-  if (validationErrors) {
-    return Promise.reject(new Error('INVALID_DATA'));
-  }
   const sql = 'INSERT INTO event (title, address, loc, staff, startDate, endDate, activity, level, id_organization) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
   return connection.promise().query(
     sql,
     [title, address, loc, staff, startDate, endDate, activity, level, orgId],
   )
     .then(([{ insertId }]) => ({
-      insertId,
+      id: insertId,
       title,
       address,
       loc,
@@ -101,44 +83,13 @@ const create = ({
 };
 
 // patch
-const modify = (id, {
-  title,
-  address,
-  loc,
-  staff,
-  startDate,
-  endDate,
-  activity,
-  level,
-}) => {
-  const validationErrors = validation({
-    title, address, loc, staff, startDate, endDate, activity, level,
-  });
-  if (validationErrors) {
-    return Promise.reject(new Error('INVALID_DATA'));
-  }
-  return find(id).then(() => {
-    const sql = 'UPDATE event SET ? WHERE id = ?';
-
-    const valuesToUpdate = {
-      title,
-      address,
-      loc,
-      staff,
-      startDate,
-      endDate,
-      activity,
-      level,
-    };
-
-    return connection.promise.query(sql, [{
-      title, address, loc, staff, startDate, endDate, activity, level, ...valuesToUpdate,
-    }, id]);
-  }).catch((err) => Promise.reject(new Error(err)));
+const modifyPatch = (id, valuesToUpdate) => {
+  const sql = 'UPDATE event SET ? WHERE id = ?';
+  return connection.promise.query(sql, [valuesToUpdate, id]);
 };
 
 // put
-const modifyAll = (id,
+const modify = (id,
   {
     title,
     address,
@@ -149,46 +100,23 @@ const modifyAll = (id,
     activity,
     level,
   }) => {
-  const validationErrors = validation({
-    title,
-    address,
-    loc,
-    staff,
-    startDate,
-    endDate,
-    activity,
-    level,
-  });
-  if (validationErrors) {
-    return Promise.reject(new Error('INVALID_DATA'));
-  }
-  return find(id).then(() => {
-    const sql = 'UPDATE admin SET ? WHERE id = ?';
-    return connection.promise.query(sql,
-      [{
-        title,
-        address,
-        loc,
-        staff,
-        startDate,
-        endDate,
-        activity,
-        level,
-      }, id]);
-  })
-    .catch((err) => Promise.reject(new Error(err)));
+  const sql = 'UPDATE admin SET ? WHERE id = ?';
+  return connection.promise.query(sql,
+    [{
+      title,
+      address,
+      loc,
+      staff,
+      startDate,
+      endDate,
+      activity,
+      level,
+    }, id]);
 };
 
 const remove = (id) => {
-  find(id).then(() => {
-    const sql = 'DELETE FROM event WHERE id = ?';
-    return connection.promise.query(sql, [id]);
-  }).catch((err) => {
-    if (err === 'RESOURCE_NOT_FOUND') {
-      return Promise.reject(new Error(err));
-    }
-    return Promise.reject(err);
-  });
+  const sql = 'DELETE FROM event WHERE id = ?';
+  return connection.promise.query(sql, [id]);
 };
 
 module.exports = {
@@ -198,6 +126,7 @@ module.exports = {
   findByTitle,
   create,
   modify,
-  modifyAll,
+  modifyPatch,
   remove,
+  validate,
 };
