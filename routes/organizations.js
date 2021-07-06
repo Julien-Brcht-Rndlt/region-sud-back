@@ -72,7 +72,7 @@ orgRouter.put('/:id', (req, res) => {
       })
       .then(() => res.status(200).json({ ...existingOrg, ...req.body }))
       .catch((err) => {
-        switch (err) {
+        switch (err.message) {
         case RESOURCE_NOT_FOUND:
           res.status(404).json({ message: `Resource organization ${orgId} not found!` });
           break;
@@ -133,7 +133,7 @@ orgRouter.post('/:id/events', (req, res) => {
       res.status(200).json({ eventId, ...req.body });
     })
     .catch((err) => {
-      switch (err) {
+      switch (err.message) {
       case 'RESOURCE_NOT_FOUND':
         res.status(404).json({ message: `Resource organization ${orgId} not found!` });
         break;
@@ -172,8 +172,7 @@ orgRouter.get('/:id/events', (req, res) => {
 });
 
 orgRouter.get('/:orgId/events/:eventId', (req, res) => {
-  const { orgId } = req.params.orgId;
-  const { eventId } = req.params.eventId;
+  const { orgId, eventId } = req.params;
   Organization.find(orgId)
     .then(() => {
       Event.find(eventId)
