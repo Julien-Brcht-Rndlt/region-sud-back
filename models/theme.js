@@ -1,12 +1,12 @@
 const Joi = require('joi');
 const connection = require('../db-config');
 
-const validate = ({ title, reference, icon }, forCreation = true) => {
+const validate = ({ title, icon }, forCreation = true) => {
   const presence = forCreation ? 'required' : 'optional';
   return Joi.object({
     title: Joi.string().max(150).presence(presence),
     icon: Joi.string().max(50),
-  }).validate({ title, reference, icon }, { abortEarly: false }).error;
+  }).validate({ title, icon }, { abortEarly: false }).error;
 };
 
 const findAll = () => {
@@ -18,7 +18,7 @@ const findAll = () => {
 };
 
 const find = (id) => {
-  const sql = 'SELECT * from themes WHERE id = ?';
+  const sql = 'SELECT * from theme WHERE id = ?';
   return connection
     .promise()
     .query(sql, [id])
@@ -26,7 +26,7 @@ const find = (id) => {
 };
 
 const create = ({ title, icon }) => {
-  const sql = 'INSERT INTO themes (title, icon) VALUES (?, ?)';
+  const sql = 'INSERT INTO theme (title, icon) VALUES (?, ?)';
   return connection
     .promise()
     .query(sql, [title, icon])
