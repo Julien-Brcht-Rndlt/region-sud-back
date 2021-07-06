@@ -5,7 +5,7 @@ const { DUPLICATE_NAME, RESOURCE_NOT_FOUND, ORG_NAME_DUPLICATE } = require('../c
 
 orgRouter.get('/', (req, res) => {
   Organization.findAll().then((organizations) => res.status(200).json(organizations))
-    .catch((err) => res.status(500).send(`Error retrieving organizations: ${err.message}`));
+    .catch((err) => res.status(500).send({ message: `Error retrieving organizations: ${err.message}` }));
 });
 
 orgRouter.get('/:id', (req, res) => {
@@ -17,10 +17,10 @@ orgRouter.get('/:id', (req, res) => {
       res.status(200).json(organization);
     }
   })
-    .catch((err) => res.status(500).send(`Error retrieving organization (#${orgId}): ${err.message}`));
+    .catch((err) => res.status(500).send({ message: `Error retrieving organization (#${orgId}): ${err.message}` }));
 });
 
-orgRouter.post('/organization', (req, res) => {
+orgRouter.post('/', (req, res) => {
   const error = Organization.validate(req.body);
   if (error) {
     res.status(422).json({ message: `Invalid data: ${error}` });
@@ -28,9 +28,10 @@ orgRouter.post('/organization', (req, res) => {
     const { orgName, orgStaff } = req.body;
     Organization.findByName(orgName)
       .then((results) => {
-        if (results) {
+        if (results && results.length) {
           return Promise.reject(new Error(DUPLICATE_NAME));
         }
+        console.log(req.body);
         return Organization.create(orgName, orgStaff);
       })
       .then((organization) => {
@@ -40,7 +41,7 @@ orgRouter.post('/organization', (req, res) => {
         if (err === DUPLICATE_NAME) {
           res.status(409).json({ message: 'This organization name is already used' });
         } else {
-          res.status(500).send('Error saving the organization');
+          res.status(500).send({ message: `Error saving the organization: ${err.message}` });
         }
       });
   }
@@ -99,7 +100,7 @@ orgRouter.delete('/:id', (req, res) => {
       if (err === RESOURCE_NOT_FOUND) {
         res.status(404).json({ message: `Resource organization ${orgId} not found!` });
       } else {
-        res.status(500).send(`Error while modifying organization resource : ${err.message} `);
+        res.status(500).send({ message: `Error while modifying organization resource : ${err.message} ` });
       }
     });
 });
