@@ -37,12 +37,12 @@ const createThemeScore = (eventId, themeId, score) => {
     });
 };
 
-const createEvalAnswer = (eventId, answerId, value) => {
+const createEvalAnswer = (eventId, answerId, evalValue) => {
   const sql = 'INSERT INTO eval_answer (id_event, id_answer, answer_value) VALUES (?, ?, ?)';
-  return connection.promise().query(sql, [eventId, answerId, value])
+  return connection.promise().query(sql, [eventId, answerId, evalValue])
     .then(([result]) => {
       console.log(result);
-      return { eventId, answerId, value };
+      return { eventId, answerId, evalValue };
     });
 };
 
