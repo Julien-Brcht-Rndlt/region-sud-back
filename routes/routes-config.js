@@ -13,7 +13,7 @@ const setupRoutes = (app) => {
   app.use('/emi/admins', adminRouter);
   app.use('/emi/themes', themeRouter);
   app.use('/emi/funnels', funnelRouter);
-  app.use('/evals/1', evalRouter);
+  app.use('/emi/evals/0', evalRouter);
 };
 
 module.exports = {
