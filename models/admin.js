@@ -57,19 +57,19 @@ const create = ({ username, email, password }) => {
 // patch
 const modifyPatch = (id, valuesToUpdate) => {
   const sql = 'UPDATE admin SET ? WHERE id = ?';
-  return connection.promise.query(sql, [valuesToUpdate, id]);
+  return connection.promise().query(sql, [valuesToUpdate, id]).then((result) => result);
 };
 
 // put
 const modify = (id, { username, email, password }) => {
   const sql = 'UPDATE admin SET ? WHERE id = ?';
   const valuesToUpdate = { username, email, password };
-  return connection.promise.query(sql, [valuesToUpdate, id]);
+  return connection.promise().query(sql, [valuesToUpdate, id]).then((result) => result);
 };
 
 const remove = (id) => {
   const sql = 'DELETE FROM admin WHERE id = ?';
-  return connection.promise.query(sql, [id]);
+  return connection.promise().query(sql, [id]).then((result) => result);
 };
 
 module.exports = {

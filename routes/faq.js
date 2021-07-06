@@ -26,20 +26,21 @@ faqRouter.post('/', (req, res) => {
   if (error) {
     res.status(422).json({ message: `Invalid data: ${error}` });
   } else {
-    const { question, response } = req.body;
+    const { question, answer } = req.body;
     Faq.findByQuestion(question)
       .then((results) => {
-        if (results) {
+        if (results && results.length) {
           return Promise.reject(new Error(RESOURCE_DUPLICATE));
         }
-        return Faq.create({ question, response });
+        return Faq.create({ question, answer });
       })
       .then((faq) => res.status(201).json(faq))
       .catch((err) => {
         if (err === RESOURCE_DUPLICATE) {
           res.status(409).json({ message: 'This question already exist' });
         } else {
-          res.status(500).send('Error saving content');
+          console.log(err === RESOURCE_DUPLICATE);
+          res.status(500).send({ message: `Error saving faq content: ${err.message}` });
         }
       });
   }
@@ -61,9 +62,9 @@ faqRouter.put('/:id', (req, res) => {
       })
       .then(() => res.status(200).json({ ...existingFaq, ...req.body }))
       .catch((err) => {
-        switch (err) {
+        switch (err.message) {
         case RESOURCE_NOT_FOUND:
-          res.status(404).json({ message: `this ${faqId} can't change` });
+          res.status(404).json({ message: `Resource faq ${faqId} not found!` });
           break;
         default:
           res.status(500).send({ message: `Error with FAQ : ${err.message} ` });
@@ -81,7 +82,7 @@ faqRouter.delete('/:id', (req, res) => {
     }
     return Faq.remove(faqId);
   })
-    .then(() => res.status(200).json({ message: `Resource faq ${faqId} has been definitaly removed` }))
+    .then(() => res.status(200).json({ message: `Resource faq ${faqId} has been definitely removed` }))
     .catch((err) => {
       if (err === RESOURCE_NOT_FOUND) {
         res.status(404).json({ message: `Resource faq ${faqId} not found!` });

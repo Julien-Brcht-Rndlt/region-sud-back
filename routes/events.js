@@ -20,26 +20,7 @@ eventRouter.get('/:id', (req, res) => {
 });
 
 eventRouter.post('/', (req, res) => {
-  const {
-    title,
-    address,
-    loc,
-    staff,
-    startDate,
-    endDate,
-    activity,
-    level,
-  } = req.body;
-  const error = Event.validate(
-    title,
-    address,
-    loc,
-    staff,
-    startDate,
-    endDate,
-    activity,
-    level,
-  );
+  const error = Event.validate(req.body);
   if (error) {
     res.status(422).json({ message: `INVALIDE_DATA: ${error}` });
   } else {
@@ -70,7 +51,7 @@ eventRouter.put('/:id', (req, res) => {
       })
       .then(() => res.status(200).json({ ...existingEvent, ...req.body }))
       .catch((err) => {
-        switch (err) {
+        switch (err.message) {
         case RESOURCE_NOT_FOUND:
           res.status(404).json({ message: `Resource event ${eventId} not found!` });
           break;

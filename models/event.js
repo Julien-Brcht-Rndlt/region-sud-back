@@ -9,7 +9,8 @@ const validate = ({
   startDate,
   endDate,
   activity,
-  level,
+  sportLevel,
+  orgId,
 }, forCreation = true) => {
   const presence = forCreation ? 'required' : 'optional';
   return Joi.object({
@@ -17,12 +18,13 @@ const validate = ({
     address: Joi.string().presence(presence),
     loc: Joi.string().presence(presence),
     staff: Joi.number(),
-    startDate: Joi.date(),
-    endDate: Joi.date(),
+    startDate: Joi.string(),
+    endDate: Joi.string(),
     activity: Joi.string(),
-    level: Joi.string(),
+    sportLevel: Joi.string(),
+    orgId: Joi.number(),
   }).validate({
-    title, address, loc, staff, startDate, endDate, activity, level,
+    title, address, loc, staff, startDate, endDate, activity, sportLevel, orgId,
   }, { abortEarly: false }).error;
 };
 
@@ -46,7 +48,7 @@ const findAllByOrg = (orgId) => {
 
 const findByTitle = (title) => {
   const sql = 'SELECT * FROM event WHERE title = ?';
-  return connection.promise.query(sql,
+  return connection.promise().query(sql,
     [title]).then(([results]) => results);
 };
 
@@ -60,13 +62,13 @@ const create = ({
   startDate,
   endDate,
   activity,
-  level,
+  sportLevel,
   orgId,
 }) => {
-  const sql = 'INSERT INTO event (title, address, loc, staff, startDate, endDate, activity, level, id_organization) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const sql = 'INSERT INTO event (title, address, loc, staff, startDate, endDate, activity, sportLevel, id_organization) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
   return connection.promise().query(
     sql,
-    [title, address, loc, staff, startDate, endDate, activity, level, orgId],
+    [title, address, loc, staff, startDate, endDate, activity, sportLevel, orgId],
   )
     .then(([{ insertId }]) => ({
       id: insertId,
@@ -77,7 +79,7 @@ const create = ({
       startDate,
       endDate,
       activity,
-      level,
+      sportLevel,
       orgId,
     }));
 };
@@ -85,7 +87,7 @@ const create = ({
 // patch
 const modifyPatch = (id, valuesToUpdate) => {
   const sql = 'UPDATE event SET ? WHERE id = ?';
-  return connection.promise.query(sql, [valuesToUpdate, id]);
+  return connection.promise().query(sql, [valuesToUpdate, id]).then((result) => result);
 };
 
 // put
@@ -98,10 +100,10 @@ const modify = (id,
     startDate,
     endDate,
     activity,
-    level,
+    sportLevel,
   }) => {
   const sql = 'UPDATE admin SET ? WHERE id = ?';
-  return connection.promise.query(sql,
+  return connection.promise().query(sql,
     [{
       title,
       address,
@@ -110,13 +112,13 @@ const modify = (id,
       startDate,
       endDate,
       activity,
-      level,
-    }, id]);
+      sportLevel,
+    }, id]).then((result) => result);
 };
 
 const remove = (id) => {
   const sql = 'DELETE FROM event WHERE id = ?';
-  return connection.promise.query(sql, [id]);
+  return connection.promise().query(sql, [id]).then((result) => result);
 };
 
 module.exports = {

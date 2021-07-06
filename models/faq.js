@@ -1,12 +1,12 @@
 const Joi = require('joi');
 const connection = require('../db-config');
 
-const validate = ({ questionFaq, answerFaq }, forCreation = true) => {
+const validate = ({ question, answer }, forCreation = true) => {
   const presence = forCreation ? 'required' : 'optional';
   return Joi.object({
-    questionFaq: Joi.string().max().presence(presence),
-    answerFaq: Joi.string().max().presence(presence),
-  }).validate({ questionFaq, answerFaq }, { abortEarly: false }).error;
+    question: Joi.string().presence(presence),
+    answer: Joi.string().presence(presence),
+  }).validate({ question, answer }, { abortEarly: false }).error;
 };
 
 const findAll = () => {
@@ -21,34 +21,38 @@ const find = (id) => {
     .then(([results]) => results[0]);
 };
 
-const findByQuestion = (label) => {
+const findByQuestion = (question) => {
   const sql = 'SELECT * FROM faq WHERE question = ?';
-  return connection.promise().query(sql, [label])
+  return connection.promise().query(sql, [question])
     .then(([results]) => results);
 };
 
-const create = ({ questionFaq, answerFaq }) => {
-  const sql = 'INSERT INTO faq (questionFaq, answerFaq, u) VALUE (?, ?)';
-  return connection.promise().query(sql, [questionFaq, answerFaq])
-    .then(([{ insertId }]) => ({ insertId, questionFaq, answerFaq }));
+const create = ({ question, answer }) => {
+  const sql = 'INSERT INTO faq (question, answer) VALUE (?, ?)';
+  return connection.promise().query(sql, [question, answer])
+    .then(([{ insertId }]) => ({ insertId, question, answer }));
 };
 
 // patch
 const modifyPatch = (id, valuesToUpdate) => {
   const sql = 'UPDATE faq SET ? WHERE id = ?';
-  return connection.promise.query(sql, [valuesToUpdate, id]);
+  return connection.promise().query(sql, [valuesToUpdate, id]);
 };
 
 // put
-const modify = (id, { questionFaq, answerFaq }) => {
-  const sql = 'UPDATE admin SET ? WHERE id = ?';
-  return connection.promise.query(sql,
-    [{ questionFaq, answerFaq }, id]);
+const modify = (id, { question, answer }) => {
+  const sql = 'UPDATE faq SET ? WHERE id = ?';
+  console.log(sql);
+  return connection.promise().query(sql,
+    [{ question, answer }, id]).then((result) => {
+    console.log(result);
+    return result;
+  });
 };
 
 const remove = (id) => {
   const sql = 'DELETE FROM faq WHERE id = ?';
-  return connection.promise.query(sql, [id]);
+  return connection.promise().query(sql, [id]).then((result) => result);
 };
 
 module.exports = {

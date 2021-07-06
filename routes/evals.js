@@ -51,8 +51,10 @@ evalRouter.get('/events/:eventId/evals', (req, res) => {
 });
 
 evalRouter.post('/events/:eventId/themes/:themeId/scores', (req, res) => {
-  const { eventId } = req.params.eventId;
-  const { themeId } = req.params.themeId;
+  const { eventId, themeId } = req.params;
+  console.log('req.params', req.params);
+  console.log('eventId: ', eventId);
+  console.log('themeId: ', themeId);
   Event.find(eventId)
     .then((event) => {
       if (!event) {
@@ -64,25 +66,25 @@ evalRouter.post('/events/:eventId/themes/:themeId/scores', (req, res) => {
       if (!theme) {
         return Promise.reject(new Error(RESOURCE_NOT_FOUND));
       }
-      const { score } = req.body.score;
+      const { score } = req.body;
       return Eval.createThemeScore(eventId, themeId, score);
     })
     .then((themeScore) => res.status(201).json(themeScore))
     .catch((err) => {
-      switch (err) {
+      console.log(err);
+      switch (err.message) {
       case RESOURCE_NOT_FOUND:
-        res.status(404).json({ message: 'One resource for eval was not found!' });
+        res.status(404).json({ message: 'Resources for saving score eval NOT FOUND!' });
         break;
       default:
-        res.status(500).send({ message: `Error while when saving eval theme score : ${err.message} ` });
+        res.status(500).send({ message: `Error while saving eval theme score : ${err.message} ` });
         break;
       }
     });
 });
 
-evalRouter.post('/events/:eventId/answers/:answerId/evals', (req, res) => {
-  const { eventId } = req.params.eventId;
-  const { answerId } = req.params.themeId;
+evalRouter.post('/events/:eventId/answers/:answerId', (req, res) => {
+  const { eventId, answerId } = req.params;
   Event.find(eventId)
     .then((event) => {
       if (!event) {
@@ -94,14 +96,17 @@ evalRouter.post('/events/:eventId/answers/:answerId/evals', (req, res) => {
       if (!answer) {
         return Promise.reject(new Error(RESOURCE_NOT_FOUND));
       }
-      const { evalValue } = req.params.value;
+      const { evalValue } = req.body;
       return Eval.createEvalAnswer(eventId, answerId, evalValue);
     })
-    .then((evalAnswer) => res.status(201).json(evalAnswer))
+    .then((evalAnswer) => {
+      console.log(evalAnswer);
+      res.status(201).json(evalAnswer);
+    })
     .catch((err) => {
-      switch (err) {
+      switch (err.message) {
       case RESOURCE_NOT_FOUND:
-        res.status(404).json({ message: 'One resource for eval was not found!' });
+        res.status(404).json({ message: 'Resources for saving score eval NOT FOUND!' });
         break;
       default:
         res.status(500).send({ message: `Error while when saving eval answer value : ${err.message} ` });

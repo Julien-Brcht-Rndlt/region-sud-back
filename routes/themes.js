@@ -8,14 +8,14 @@ themeRouter.get('/', (req, res) => {
 
 themeRouter.get('/:id', (req, res) => {
   const themeId = req.params.id;
-  Theme.findId(themeId).then((theme) => {
+  Theme.find(themeId).then((theme) => {
     if (!theme) {
-      res.status(404).json({ message: `Resource organization ${themeId} not found!` });
+      res.status(404).json({ message: `Resource theme ${themeId} not found!` });
     } else {
       res.status(200).json(theme);
     }
   })
-    .catch((err) => res.status(500).send({ message: `Error retrieving faq: ${err.message}` }));
+    .catch((err) => res.status(500).send({ message: `Error retrieving theme: ${err.message}` }));
 });
 
 themeRouter.post('/', (req, res) => {
