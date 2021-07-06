@@ -29,7 +29,7 @@ adminRouter.post('/', (req, res) => {
     const { username, email } = req.body;
     Admin.findMany({ username, email })
       .then((results) => {
-        if (results.length) {
+        if (results && results.length) {
           if (results.find((result) => result.username === username)) {
             return Promise.reject(new Error(USERNAME_DUPLICATE));
           }
