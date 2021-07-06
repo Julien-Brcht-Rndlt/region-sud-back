@@ -62,7 +62,7 @@ faqRouter.put('/:id', (req, res) => {
       })
       .then(() => res.status(200).json({ ...existingFaq, ...req.body }))
       .catch((err) => {
-        switch (err) {
+        switch (err.message) {
         case RESOURCE_NOT_FOUND:
           res.status(404).json({ message: `Resource faq ${faqId} not found!` });
           break;
