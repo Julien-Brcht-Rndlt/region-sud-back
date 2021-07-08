@@ -23,6 +23,7 @@ orgRouter.get('/:id', (req, res) => {
 orgRouter.post('/', (req, res) => {
   const error = Organization.validate(req.body);
   if (error) {
+    console.log('error', error);
     res.status(422).json({ message: `Invalid data: ${error}` });
   } else {
     const { orgName, orgStaff } = req.body;
@@ -31,14 +32,14 @@ orgRouter.post('/', (req, res) => {
         if (results && results.length) {
           return Promise.reject(new Error(DUPLICATE_NAME));
         }
-        console.log(req.body);
         return Organization.create(orgName, orgStaff);
       })
       .then((organization) => {
+        console.log(organization);
         res.status(201).json(organization);
       })
       .catch((err) => {
-        if (err === DUPLICATE_NAME) {
+        if (err.message === DUPLICATE_NAME) {
           res.status(409).json({ message: 'This organization name is already used' });
         } else {
           res.status(500).send({ message: `Error saving the organization: ${err.message}` });
@@ -108,39 +109,42 @@ orgRouter.delete('/:id', (req, res) => {
 orgRouter.post('/:id/events', (req, res) => {
   const orgId = req.params.id;
   const {
-    title,
-    address,
-    loc,
-    staff,
-    startDate,
-    endDate,
+    eventName,
+    eventAddr,
+    eventLoc,
+    eventStaff,
+    eventStart,
+    eventEnd,
     activity,
-    level,
+    sportLevel,
   } = req.body;
-  Event.create(
-    title,
-    address,
-    loc,
-    staff,
-    startDate,
-    endDate,
+  const eventData = {
+    title: eventName,
+    address: eventAddr,
+    loc: eventLoc,
+    staff: eventStaff,
+    startDate: eventStart,
+    endDate: eventEnd,
     activity,
-    level,
+    sportLevel,
     orgId,
-  )
-    .then(([result]) => {
-      const eventId = result.insertId;
-      res.status(200).json({ eventId, ...req.body });
+  };
+  Event.create(eventData)
+    .then((event) => {
+      res.status(200).json(event);
     })
     .catch((err) => {
       switch (err.message) {
       case 'RESOURCE_NOT_FOUND':
+        console.log('error 404', err.message);
         res.status(404).json({ message: `Resource organization ${orgId} not found!` });
         break;
       case 'INVALID_DATA':
+        console.log('error 422', err.message);
         res.status(422).json({ message: 'invalid data' });
         break;
       default:
+        console.log('error 500', err);
         res.status(500).send(`Error while modifying organization resource : ${err.message} `);
         break;
       }

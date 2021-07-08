@@ -66,6 +66,7 @@ const create = ({
   orgId,
 }) => {
   const sql = 'INSERT INTO event (title, address, loc, staff, startDate, endDate, activity, sportLevel, id_organization) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
   return connection.promise().query(
     sql,
     [title, address, loc, staff, startDate, endDate, activity, sportLevel, orgId],
