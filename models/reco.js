@@ -7,7 +7,16 @@ const findAll = () => {
 
 const find = (id) => {
   const sql = 'SELECT * FROM recommandation WHERE id = ?';
-  return connection.promise().query(sql, [id]).then(([results]) => results[0]);
+  return connection.promise().query(sql, [id]).then(([results]) => {
+    console.log(results[0]);
+    return results[0];
+  });
+};
+
+const findByTitle = (title) => {
+  const sql = 'SELECT * FROM recommandation WHERE title = ?';
+  return connection.promise().query(sql,
+    [title]).then(([results]) => results);
 };
 
 const create = (reco) => {
@@ -34,6 +43,7 @@ const remove = (id) => {
 module.exports = {
   findAll,
   find,
+  findByTitle,
   create,
   modify,
   remove,
