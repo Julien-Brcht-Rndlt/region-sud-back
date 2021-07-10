@@ -1,11 +1,16 @@
 const orgRouter = require('express').Router();
 const Organization = require('../models/organization');
 const Event = require('../models/event');
-const { DUPLICATE_NAME, RESOURCE_NOT_FOUND, ORG_NAME_DUPLICATE } = require('../constants');
+const {
+  DUPLICATE_NAME,
+  RESOURCE_NOT_FOUND,
+  ORG_NAME_DUPLICATE,
+  INVALID_DATA,
+} = require('../constants');
 
 orgRouter.get('/', (req, res) => {
   Organization.findAll().then((organizations) => res.status(200).json(organizations))
-    .catch((err) => res.status(500).send({ message: `Error retrieving organizations: ${err.message}` }));
+    .catch((err) => res.status(500).json({ message: `Error retrieving organizations: ${err.message}` }));
 });
 
 orgRouter.get('/:id', (req, res) => {
@@ -17,7 +22,7 @@ orgRouter.get('/:id', (req, res) => {
       res.status(200).json(organization);
     }
   })
-    .catch((err) => res.status(500).send({ message: `Error retrieving organization (#${orgId}): ${err.message}` }));
+    .catch((err) => res.status(500).json({ message: `Error retrieving organization (#${orgId}): ${err.message}` }));
 });
 
 orgRouter.post('/', (req, res) => {
@@ -34,15 +39,12 @@ orgRouter.post('/', (req, res) => {
         }
         return Organization.create(orgName, orgStaff);
       })
-      .then((organization) => {
-        console.log(organization);
-        res.status(201).json(organization);
-      })
+      .then((organization) => res.status(201).json(organization))
       .catch((err) => {
         if (err.message === DUPLICATE_NAME) {
           res.status(409).json({ message: 'This organization name is already used' });
         } else {
-          res.status(500).send({ message: `Error saving the organization: ${err.message}` });
+          res.status(500).json({ message: `Error saving the organization: ${err.message}` });
         }
       });
   }
@@ -66,7 +68,7 @@ orgRouter.put('/:id', (req, res) => {
       })
       .then(() => Organization.findByName(orgName))
       .then((results) => {
-        if (results.length && results.filter((result) => result.orgName === orgName)) {
+        if (results.length && results.find((result) => result.orgName === orgName)) {
           return Promise.reject(new Error(ORG_NAME_DUPLICATE));
         }
         return Organization.modify(orgId, req.body);
@@ -81,7 +83,7 @@ orgRouter.put('/:id', (req, res) => {
           res.status(409).json({ message: 'organization name already in use' });
           break;
         default:
-          res.status(500).send({ message: `Error while modifying organization resource : ${err.message} ` });
+          res.status(500).json({ message: `Error while modifying organization resource : ${err.message}` });
           break;
         }
       });
@@ -98,10 +100,10 @@ orgRouter.delete('/:id', (req, res) => {
   })
     .then(() => res.status(200).json({ message: `Resource organization ${orgId} has been definitely removed` }))
     .catch((err) => {
-      if (err === RESOURCE_NOT_FOUND) {
+      if (err.message === RESOURCE_NOT_FOUND) {
         res.status(404).json({ message: `Resource organization ${orgId} not found!` });
       } else {
-        res.status(500).send({ message: `Error while modifying organization resource : ${err.message} ` });
+        res.status(500).json({ message: `Error while deleting organization resource : ${err.message}` });
       }
     });
 });
@@ -135,17 +137,14 @@ orgRouter.post('/:id/events', (req, res) => {
     })
     .catch((err) => {
       switch (err.message) {
-      case 'RESOURCE_NOT_FOUND':
-        console.log('error 404', err.message);
+      case RESOURCE_NOT_FOUND:
         res.status(404).json({ message: `Resource organization ${orgId} not found!` });
         break;
-      case 'INVALID_DATA':
-        console.log('error 422', err.message);
+      case INVALID_DATA:
         res.status(422).json({ message: 'invalid data' });
         break;
       default:
-        console.log('error 500', err);
-        res.status(500).send(`Error while modifying organization resource : ${err.message} `);
+        res.status(500).json({ message: `Error when creating an event resource for an organization: ${err.message}` });
         break;
       }
     });
@@ -166,7 +165,7 @@ orgRouter.get('/:id/events', (req, res) => {
         });
     })
     .catch((err) => {
-      if (err === 'RESOURCE_NOT_FOUND') {
+      if (err.message === RESOURCE_NOT_FOUND) {
         res.status(404).json({ message: `Resource organization ${orgId} not found!` });
       } else {
         res.status(500)
@@ -184,17 +183,17 @@ orgRouter.get('/:orgId/events/:eventId', (req, res) => {
           res.status(200).json(results[0]);
         })
         .catch((err) => {
-          if (err === 'RESOURCE_NOT_FOUND') {
-            res.status(404).json({ message: `Resource organization ${eventId} not found!` });
+          if (err.message === RESOURCE_NOT_FOUND) {
+            res.status(404).json({ message: `Resource event ${eventId} not found!` });
           } else {
             res
               .status(500)
-              .json({ message: `Error retrieving events: ${err.message}` });
+              .json({ message: `Error retrieving event: ${err.message}` });
           }
         });
     })
     .catch((err) => {
-      if (err === 'RESOURCE_NOT_FOUND') {
+      if (err.message === RESOURCE_NOT_FOUND) {
         res.status(404).json({ message: `Resource organization ${orgId} not found!` });
       } else {
         res.status(500)

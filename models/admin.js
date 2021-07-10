@@ -31,11 +31,7 @@ const find = (id) => {
   return connection
     .promise()
     .query(sql, [id])
-    .then(([results]) => {
-      console.log(results);
-      console.log(results[0]);
-      return results[0];
-    });
+    .then(([results]) => results[0]);
 };
 
 const create = ({ username, email, password }) => {
@@ -43,13 +39,13 @@ const create = ({ username, email, password }) => {
   return connection
     .promise()
     .query(sql, [username, email, password])
-    .then((result) => {
+    .then(([result]) => {
       const adminId = result.insertId;
       return {
         id: adminId,
         username,
         email,
-        password,
+      /*    password, */
       };
     });
 };
@@ -57,19 +53,19 @@ const create = ({ username, email, password }) => {
 // patch
 const modifyPatch = (id, valuesToUpdate) => {
   const sql = 'UPDATE admin SET ? WHERE id = ?';
-  return connection.promise().query(sql, [valuesToUpdate, id]).then((result) => result);
+  return connection.promise().query(sql, [valuesToUpdate, id]).then(([result]) => result);
 };
 
 // put
 const modify = (id, { username, email, password }) => {
   const sql = 'UPDATE admin SET ? WHERE id = ?';
   const valuesToUpdate = { username, email, password };
-  return connection.promise().query(sql, [valuesToUpdate, id]).then((result) => result);
+  return connection.promise().query(sql, [valuesToUpdate, id]).then(([result]) => result);
 };
 
 const remove = (id) => {
   const sql = 'DELETE FROM admin WHERE id = ?';
-  return connection.promise().query(sql, [id]).then((result) => result);
+  return connection.promise().query(sql, [id]).then((result) => result[0]);
 };
 
 module.exports = {

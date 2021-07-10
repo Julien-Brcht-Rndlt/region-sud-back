@@ -36,18 +36,18 @@ const create = (orgName, orgStaff) => {
 // patch
 const modifyPatch = (id, valuesToUpdate) => {
   const sql = 'UPDATE organization SET ? WHERE id = ?';
-  return connection.promise().query(sql, [valuesToUpdate, id]).then((result) => result);
+  return connection.promise().query(sql, [valuesToUpdate, id]).then(([result]) => result);
 };
 
 // put
 const modify = (id, { orgName, orgStaff }) => {
   const sql = 'UPDATE organization SET ? WHERE id = ?';
-  return connection.promise().query(sql, [{ orgName, orgStaff }, id]).then((result) => result);
+  return connection.promise().query(sql, [{ orgName, orgStaff }, id]).then(([result]) => result);
 };
 
 const remove = (id) => {
   const sql = 'DELETE FROM organization WHERE id = ?';
-  return connection.promise().query(sql, [id]).then((result) => result);
+  return connection.promise().query(sql, [id]).then(([result]) => result);
 };
 
 module.exports = {

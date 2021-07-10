@@ -70,7 +70,6 @@ recoRouter.delete('/:id', (req, res) => {
   const { id } = req.params;
   Reco.remove(id)
     .then((result) => {
-      console.log(result.affectedRows);
       if (result.affectedRows) {
         res.status(200).json({ message: `Resource recommandation ${id} has been definitely removed` });
       } else {

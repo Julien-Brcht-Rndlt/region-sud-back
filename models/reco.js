@@ -25,10 +25,7 @@ const create = (reco) => {
 const modify = (id, reco, valuesToUpdate) => {
   const sql = 'UPDATE recommandation SET ? WHERE id = ?';
   return connection.promise().query(sql, [valuesToUpdate, id])
-    .then((result) => {
-      console.log(result);
-      return { id, ...reco, ...valuesToUpdate };
-    });
+    .then(() => ({ id, ...reco, ...valuesToUpdate }));
 };
 
 const remove = (id) => {

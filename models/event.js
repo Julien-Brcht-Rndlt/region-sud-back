@@ -88,7 +88,7 @@ const create = ({
 // patch
 const modifyPatch = (id, valuesToUpdate) => {
   const sql = 'UPDATE event SET ? WHERE id = ?';
-  return connection.promise().query(sql, [valuesToUpdate, id]).then((result) => result);
+  return connection.promise().query(sql, [valuesToUpdate, id]).then(([result]) => result);
 };
 
 // put
@@ -114,12 +114,12 @@ const modify = (id,
       endDate,
       activity,
       sportLevel,
-    }, id]).then((result) => result);
+    }, id]).then(([result]) => result);
 };
 
 const remove = (id) => {
   const sql = 'DELETE FROM event WHERE id = ?';
-  return connection.promise().query(sql, [id]).then((result) => result);
+  return connection.promise().query(sql, [id]).then(([result]) => result);
 };
 
 module.exports = {
