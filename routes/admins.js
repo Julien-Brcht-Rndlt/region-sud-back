@@ -147,7 +147,7 @@ adminRouter.delete('/:id', (req, res) => {
     }
     return Admin.remove(adminId);
   })
-    .then(() => res.status(200).json({ message: `Resource admin ${adminId} has been definitaly removed` }))
+    .then(() => res.status(200).json({ message: `Resource admin ${adminId} has been definitely removed` }))
     .catch((err) => {
       if (err.message === RESOURCE_NOT_FOUND) {
         res.status(404).json({ message: `Resource admin ${adminId} not found!` });
