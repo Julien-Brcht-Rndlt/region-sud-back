@@ -16,10 +16,13 @@ const create = (reco) => {
     .then(([{ insertId }]) => ({ id: insertId, ...reco }));
 };
 
-const modify = (id, valuesToUpdate) => {
+const modify = (id, reco, valuesToUpdate) => {
   const sql = 'UPDATE recommandation SET ? WHERE id = ?';
   return connection.promise().query(sql, [valuesToUpdate, id])
-    .then((result) => result);
+    .then((result) => {
+      console.log(result);
+      return { id, ...reco, ...valuesToUpdate };
+    });
 };
 
 const remove = (id) => {
