@@ -96,7 +96,7 @@ orgRouter.delete('/:id', (req, res) => {
     }
     return Organization.remove(orgId);
   })
-    .then(() => res.status(200).json({ message: `Resource organization ${orgId} has been definitaly removed` }))
+    .then(() => res.status(200).json({ message: `Resource organization ${orgId} has been definitely removed` }))
     .catch((err) => {
       if (err === RESOURCE_NOT_FOUND) {
         res.status(404).json({ message: `Resource organization ${orgId} not found!` });
