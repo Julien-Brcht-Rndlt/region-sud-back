@@ -4,7 +4,7 @@ const { USERNAME_DUPLICATE, EMAIL_DUPLICATE, RESOURCE_NOT_FOUND } = require('../
 
 adminRouter.get('/', (req, res) => {
   Admin.findAll().then((admins) => res.status(200).json(admins))
-    .catch((err) => res.status(500).send(`Error from Admin : ${err.message}`));
+    .catch((err) => res.status(500).json({ message: `Error from Admin : ${err.message}` }));
 });
 
 adminRouter.get('/:id', (req, res) => {
@@ -17,7 +17,7 @@ adminRouter.get('/:id', (req, res) => {
     }
   })
     .catch((err) => {
-      res.status(500).send(`Error from Admin ${adminId} : ${err.message} `);
+      res.status(500).json({ message: `Error from Admin ${adminId} : ${err.message}` });
     });
 });
 
@@ -39,12 +39,11 @@ adminRouter.post('/', (req, res) => {
         }
         return Admin.create(req.body);
       })
-      .then((result) => {
-        const adminId = result.insertId;
-        res.status(201).json({ id: adminId, ...req.body });
+      .then((admin) => {
+        res.status(201).json(admin);
       })
       .catch((err) => {
-        switch (err) {
+        switch (err.message) {
         case USERNAME_DUPLICATE:
           res.status(409).json({ message: 'username already in use' });
           break;
@@ -52,7 +51,7 @@ adminRouter.post('/', (req, res) => {
           res.status(409).json({ message: 'email already in use' });
           break;
         default:
-          res.status(500).send(`Error while creating admin resource : ${err.message} `);
+          res.status(500).json({ message: `Error while creating admin resource : ${err.message}` });
           break;
         }
       });
@@ -78,23 +77,31 @@ adminRouter.put('/:id', (req, res) => {
       .then(() => Admin.findMany({ username, email }))
       .then((results) => {
         if (results.length) {
-          if (results.filter((result) => result.username === username)) {
+          if (existingAdmin.username !== username
+            && results.find((result) => result.username === username)) {
             return Promise.reject(new Error(USERNAME_DUPLICATE));
           }
-          if (results.filter((result) => result.email === email)) {
+          if (existingAdmin.email !== email
+            && results.find((result) => result.email === email)) {
             return Promise.reject(new Error(EMAIL_DUPLICATE));
           }
         }
         return Admin.modify(adminId, req.body);
       })
-      .then(() => res.status(200).json({ ...existingAdmin, ...req.body }))
+      .then(() => res.status(200).json({ ...existingAdmin, ...req.body, password: '' }))
       .catch((err) => {
-        switch (err) {
+        switch (err.message) {
         case RESOURCE_NOT_FOUND:
           res.status(404).json({ message: `Resource admin ${adminId} not found!` });
           break;
+        case USERNAME_DUPLICATE:
+          res.status(409).json({ message: 'username already in use' });
+          break;
+        case EMAIL_DUPLICATE:
+          res.status(409).json({ message: 'email already in use' });
+          break;
         default:
-          res.status(500).send(`Error while modifying admin resource : ${err.message} `);
+          res.status(500).json({ message: `Error while modifying admin resource : ${err.message}` });
           break;
         }
       });
@@ -117,15 +124,15 @@ adminRouter.patch('/:id', (req, res) => {
         return Admin.modifyPatch(adminId, req.body);
       })
       .then(() => {
-        res.status(200).json({ ...existingAdmin, ...req.body });
+        res.status(200).json({ ...existingAdmin, ...req.body, password: '' });
       })
       .catch((err) => {
-        switch (err) {
+        switch (err.message) {
         case RESOURCE_NOT_FOUND:
           res.status(404).json({ message: `Resource admin ${adminId} not found!` });
           break;
         default:
-          res.status(500).send(`Error while modifying admin resource : ${err.message} `);
+          res.status(500).json({ message: `Error while modifying admin resource : ${err.message}` });
           break;
         }
       });
@@ -142,10 +149,10 @@ adminRouter.delete('/:id', (req, res) => {
   })
     .then(() => res.status(200).json({ message: `Resource admin ${adminId} has been definitaly removed` }))
     .catch((err) => {
-      if (err === 'RESOURCE_NOT_FOUND') {
+      if (err.message === RESOURCE_NOT_FOUND) {
         res.status(404).json({ message: `Resource admin ${adminId} not found!` });
       } else {
-        res.status(500).send(`Error while modifying admin resource : ${err.message} `);
+        res.status(500).json({ message: `Error while removing admin resource ${adminId} : ${err.message}` });
       }
     });
 });
