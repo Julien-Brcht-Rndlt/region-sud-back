@@ -14,7 +14,7 @@ const setupRoutes = (app) => {
   app.use('/emi/admins', adminRouter);
   app.use('/emi/themes', themeRouter);
   app.use('/emi/funnels', funnelRouter);
-  app.use('/emi/evals/0', evalRouter);
+  app.use('/emi/evals', evalRouter);
   app.use('/emi/recommandations', recoRouter);
 };
 

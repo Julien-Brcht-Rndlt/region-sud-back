@@ -12,7 +12,6 @@ const find = () => {
   JOIN answer_type ON answer.id_answer_type = answer_type.id
   ORDER BY theme.id, question.id, answer.id;`;
 
-  console.log('execute funnel sql request');
   return connection.promise().query(sql).then(([results]) => results);
 };
 
