@@ -9,7 +9,6 @@ const buildFunnelJSON = (rows) => {
 
   let currFunnelTheme = null;
   let currFunnelQuestion = null;
-
   rows.forEach((row) => {
     if (!funnel.themes.find((theme) => theme.id === row.theme_id)) {
       funnel.themes.push({
@@ -41,7 +40,7 @@ const buildFunnelJSON = (rows) => {
         id: row.answer_id,
         label: row.answer_title,
         weight: row.weight,
-        answ_type: row.answer_type,
+        answ_type: row.type,
         id_question: row.id_question,
       });
     }
