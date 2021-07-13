@@ -10,7 +10,6 @@ recoRouter.get('/', (req, res) => {
 
 recoRouter.get('/:id', (req, res) => {
   const { id } = req.params;
-  console.log(`get ${id}`);
   Reco.find(id)
     .then((reco) => {
       if (!reco) {
