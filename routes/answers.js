@@ -6,7 +6,13 @@ const { RESOURCE_NOT_FOUND } = require('../constants');
 answerRouter.get('/:id/recommandations', (req, res) => {
   const { id } = req.params;
   Answer.find(id)
-    .then(() => Reco.findByAnswer(id))
+    .then((answer) => {
+      console.log('answer', answer);
+      if (!answer) {
+        return Promise.reject(new Error(RESOURCE_NOT_FOUND));
+      }
+      return Reco.findByAnswer(id);
+    })
     .then((recos) => res.status(200).json(recos))
     .catch((err) => {
       if (err.message === RESOURCE_NOT_FOUND) {
