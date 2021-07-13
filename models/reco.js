@@ -16,6 +16,15 @@ const findByTitle = (title) => {
     [title]).then(([results]) => results);
 };
 
+const findByAnswer = (id) => {
+  const sql = `SELECT recommandation.id, recommandation.title, recommandation.content, recommandation.url, trigger_value, trigger_max from recommandation
+  JOIN related_to ON recommandation.id = id_recommandation
+  JOIN answer ON id_answer = answer.id
+  WHERE answer.id = ${id}`;
+
+  return connection.promise().query(sql, [id]).then(([results]) => results);
+};
+
 const create = (reco) => {
   const sql = 'INSERT INTO recommandation SET ?';
   return connection.promise().query(sql, [reco])
@@ -38,6 +47,7 @@ module.exports = {
   findAll,
   find,
   findByTitle,
+  findByAnswer,
   create,
   modify,
   remove,
