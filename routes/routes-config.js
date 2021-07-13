@@ -6,6 +6,7 @@ const themeRouter = require('./themes');
 const funnelRouter = require('./funnels');
 const evalRouter = require('./evals');
 const recoRouter = require('./recos');
+const answerRouter = require('./answers');
 
 const setupRoutes = (app) => {
   app.use('/emi/organizations', orgRouter);
@@ -16,6 +17,7 @@ const setupRoutes = (app) => {
   app.use('/emi/funnels', funnelRouter);
   app.use('/emi/evals', evalRouter);
   app.use('/emi/recommandations', recoRouter);
+  app.use('/emi/answers', answerRouter);
 };
 
 module.exports = {
