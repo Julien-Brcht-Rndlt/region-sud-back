@@ -11,7 +11,7 @@ const buildEvalScoresEventJSON = (rows) => {
       evalScores.themes.push({
         id: row.theme_id,
         title: row.theme_title,
-        icon: `/assets/theme-${row.theme_id}.png`,
+        icon: `/assets/img/themes/theme-${row.theme_id}.png`,
         score: row.score,
       });
     }
@@ -36,7 +36,7 @@ const buildEvalAnswersEventJSON = (rows) => {
       evalAnswers.themes.push({
         id: row.theme_id,
         title: row.theme_title,
-        icon: `/assets/theme-${row.theme_id}.png`,
+        icon: `/assets/img/themes/theme-${row.theme_id}.png`,
       });
     }
     currEvalTheme = evalAnswers.themes.find((theme) => theme.id === row.theme_id);
