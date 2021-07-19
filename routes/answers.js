@@ -7,7 +7,6 @@ answerRouter.get('/:id/recommandations', (req, res) => {
   const { id } = req.params;
   Answer.find(id)
     .then((answer) => {
-      console.log('answer', answer);
       if (!answer) {
         return Promise.reject(new Error(RESOURCE_NOT_FOUND));
       }

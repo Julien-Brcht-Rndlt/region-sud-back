@@ -28,7 +28,6 @@ orgRouter.get('/:id', (req, res) => {
 orgRouter.post('/', (req, res) => {
   const error = Organization.validate(req.body);
   if (error) {
-    console.log('error', error);
     res.status(422).json({ message: `Invalid data: ${error}` });
   } else {
     const { orgName, orgStaff } = req.body;
