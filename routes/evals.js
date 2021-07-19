@@ -52,9 +52,6 @@ evalRouter.get('/events/:eventId/evals', (req, res) => {
 
 evalRouter.post('/events/:eventId/themes/:themeId/scores', (req, res) => {
   const { eventId, themeId } = req.params;
-  console.log('req.params', req.params);
-  console.log('eventId: ', eventId);
-  console.log('themeId: ', themeId);
   Event.find(eventId)
     .then((event) => {
       if (!event) {
