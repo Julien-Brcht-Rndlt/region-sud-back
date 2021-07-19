@@ -53,7 +53,7 @@ const buildEvalAnswersEventJSON = (rows) => {
     }
     currEvalQuestion = currEvalTheme.questions.find((question) => question.id === row.question_id);
 
-    if (!('answers' in currEvalQuestion)) {
+    if (!('givenAnswers' in currEvalQuestion)) {
       currEvalQuestion.answers = [];
     }
     if (!currEvalQuestion.answers.find((answer) => answer.id === row.answer_id)) {
@@ -61,7 +61,7 @@ const buildEvalAnswersEventJSON = (rows) => {
         id: row.answer_id,
         label: row.answer_title,
         weight: row.weight,
-        eval_answer: row.answer_value,
+        eval_value: row.answer_value,
         id_question: row.id_question,
       });
     }

@@ -3,7 +3,7 @@ const Theme = require('../models/theme');
 
 themeRouter.get('/', (req, res) => {
   Theme.findAll().then((themes) => res.status(200).json(themes))
-    .catch((err) => res.status(500).send({ message: `Error retrieving faq: ${err.message}` }));
+    .catch((err) => res.status(500).send({ message: `Error retrieving all themes resources: ${err.message}` }));
 });
 
 themeRouter.get('/:id', (req, res) => {
@@ -21,7 +21,7 @@ themeRouter.get('/:id', (req, res) => {
 themeRouter.post('/', (req, res) => {
   const error = Theme.validate(req.body);
   if (error) {
-    res.status(422).json({ message: `INVALIDE_DATA: ${error}` });
+    res.status(422).json({ message: `INVALID_DATA: ${error}` });
   }
   Theme.create(req.body).then((theme) => {
     res.status(201).json(theme);

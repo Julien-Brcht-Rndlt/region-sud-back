@@ -36,23 +36,20 @@ const create = ({ question, answer }) => {
 // patch
 const modifyPatch = (id, valuesToUpdate) => {
   const sql = 'UPDATE faq SET ? WHERE id = ?';
-  return connection.promise().query(sql, [valuesToUpdate, id]);
+  return connection.promise().query(sql, [valuesToUpdate, id])
+    .then(([result]) => result);
 };
 
 // put
 const modify = (id, { question, answer }) => {
   const sql = 'UPDATE faq SET ? WHERE id = ?';
-  console.log(sql);
   return connection.promise().query(sql,
-    [{ question, answer }, id]).then((result) => {
-    console.log(result);
-    return result;
-  });
+    [{ question, answer }, id]).then(([result]) => result);
 };
 
 const remove = (id) => {
   const sql = 'DELETE FROM faq WHERE id = ?';
-  return connection.promise().query(sql, [id]).then((result) => result);
+  return connection.promise().query(sql, [id]).then((result) => result[0]);
 };
 
 module.exports = {

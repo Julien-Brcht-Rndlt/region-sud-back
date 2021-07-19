@@ -16,10 +16,10 @@ const findEventAnswers = (id) => {
   related_to.id_answer as rel_to_id_answer,  related_to.id_recommandation as rel_to_id_recommandation, trigger_value, trigger_max,
   recommandation.id as reco_id, recommandation.title as reco_label, recommandation.content as reco_content, recommandation.url as reco_url 
   FROM event
-  LEFT JOIN eval_answer ON event.id = eval_answer.id_event
-  RIGHT JOIN answer ON eval_answer.id_answer = answer.id
+  JOIN eval_answer ON event.id = eval_answer.id_event
+  JOIN answer ON eval_answer.id_answer = answer.id
   LEFT JOIN related_to ON answer.id = related_to.id_answer
-  JOIN recommandation ON related_to.id_recommandation = recommandation.id
+  LEFT JOIN recommandation ON related_to.id_recommandation = recommandation.id
   JOIN question ON question.id = answer.id_question
   JOIN theme ON theme.id = question.id_theme
   ORDER BY theme.id, question.id, answer.id, recommandation.id;
@@ -31,19 +31,13 @@ const findEventAnswers = (id) => {
 const createThemeScore = (eventId, themeId, score) => {
   const sql = 'INSERT INTO is_evaluated (id_event, id_theme, score) VALUES (?, ?, ?)';
   return connection.promise().query(sql, [eventId, themeId, score])
-    .then(([result]) => {
-      console.log(result);
-      return { eventId, themeId, score };
-    });
+    .then(() => ({ eventId, themeId, score }));
 };
 
 const createEvalAnswer = (eventId, answerId, evalValue) => {
   const sql = 'INSERT INTO eval_answer (id_event, id_answer, answer_value) VALUES (?, ?, ?)';
   return connection.promise().query(sql, [eventId, answerId, evalValue])
-    .then(([result]) => {
-      console.log(result);
-      return { eventId, answerId, evalValue };
-    });
+    .then(() => ({ eventId, answerId, evalValue }));
 };
 
 module.exports = {

@@ -2,8 +2,8 @@ const funnelRouter = require('express').Router();
 const Funnel = require('../models/funnel');
 const { buildFunnelJSON } = require('../utils/funnel');
 
-funnelRouter.get('/funnel', (req, res) => {
-  Funnel.find().then(([results]) => {
+funnelRouter.get('/', (req, res) => {
+  Funnel.find().then((results) => {
     const funnel = buildFunnelJSON(results);
     res.status(200).json(funnel);
   })
