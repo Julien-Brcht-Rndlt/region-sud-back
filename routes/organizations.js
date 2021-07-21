@@ -7,8 +7,11 @@ const {
   ORG_NAME_DUPLICATE,
   INVALID_DATA,
 } = require('../constants');
+const setHeaders = require('../middlewares/setHeaders');
 
-orgRouter.get('/', (req, res) => {
+orgRouter.get('/', setHeaders, (req, res) => {
+  res.setHeader('Access-Control-Expose-Headers', 'Content-Range');
+  res.setHeader('Content-Range', 'bytes : 0-9/*');
   Organization.findAll().then((organizations) => res.status(200).json(organizations))
     .catch((err) => res.status(500).json({ message: `Error retrieving organizations: ${err.message}` }));
 });
