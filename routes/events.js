@@ -1,8 +1,9 @@
 const eventRouter = require('express').Router();
 const Event = require('../models/event');
 const { RESOURCE_NOT_FOUND } = require('../constants');
+const setHeaders = require('../middlewares/setHeaders');
 
-eventRouter.get('/', (req, res) => {
+eventRouter.get('/', setHeaders, (req, res) => {
   Event.findAll().then((events) => res.status(200).json(events))
     .catch((err) => res.status(500).json({ message: `Error while retrieving events: ${err.message}` }));
 });
