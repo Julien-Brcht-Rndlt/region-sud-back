@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node -r dotenv/config index",
+    "build": "react-scripts build",
     "dev": "nodemon -r dotenv/config index.js",
     "lint": "./node_modules/.bin/eslint --ext .js",
     "test": "DB_NAME=databasename_test jest",
-    "test:watch": "DB_NAME=databasename_test jest --watch"
+    "test:watch": "DB_NAME=databasename_test jest --watch",
+    "eject": "react-scripts eject"
   },
   "keywords": [],
   "author": "",
