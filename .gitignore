@@ -5,3 +5,6 @@ package-lock.json
 
 # vs code custom colors
 .vscode
+
+mac users
+.DS_Store
