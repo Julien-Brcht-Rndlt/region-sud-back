@@ -45,7 +45,6 @@ const create = ({ username, email, password }) => {
         id: adminId,
         username,
         email,
-      /*    password, */
       };
     });
 };
