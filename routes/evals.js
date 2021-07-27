@@ -68,7 +68,6 @@ evalRouter.post('/events/:eventId/themes/:themeId/scores', (req, res) => {
     })
     .then((themeScore) => res.status(201).json(themeScore))
     .catch((err) => {
-      console.log(err);
       switch (err.message) {
       case RESOURCE_NOT_FOUND:
         res.status(404).json({ message: 'Resources for saving score eval NOT FOUND!' });
@@ -97,7 +96,6 @@ evalRouter.post('/events/:eventId/answers/:answerId', (req, res) => {
       return Eval.createEvalAnswer(eventId, answerId, evalValue);
     })
     .then((evalAnswer) => {
-      console.log(evalAnswer);
       res.status(201).json(evalAnswer);
     })
     .catch((err) => {
