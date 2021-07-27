@@ -40,17 +40,6 @@ INSERT INTO question( title, id_theme) VALUES
 ('Avez-vous mis en place des solutions de réduction de consommation électrique ?', 4),
 ('êtes-vous autonome en production électrique avec des solutions renouvelables ?', 4);
 
-Le reste des Thèmes
-('Avez-vous mis en place des dispositifs de sensibilisation aux écosystèmes fragiles ?') ,
-('Quelles est la distance moyenne entre le domicile de vos participants et le lieu de la manifestation ?') ,
-('Quels est le mode de déplacement privilégiés des équipages ?') ,
-('utilisez vous des embarcations écoconçues ?',) ,
-('Quels sont les types de motorisations des embarcations ?') ,
-('Combien de bateaux à moteurs sont utilisés sur l'ensemble de votre événement ?') ,
-('Utilisez vous des produits d'entretien des bateaux biodégradables ?') ,
-('Le port de plaisance d'où partent les bateaux est-il certifié "ports propres" ?') ,
-('La base nautique est-elle basse consommation (R12) ?') ,
-
 #------------------------------------------------------------
 # Answer_type
 #------------------------------------------------------------
@@ -263,7 +252,6 @@ INSERT INTO related_to (id_answer, id_recommandation, trigger_value, trigger_max
 INSERT INTO related_to (id_answer, id_recommandation, trigger_value, trigger_max) VALUES (22, 13, '', '');
 INSERT INTO related_to (id_answer, id_recommandation, trigger_value, trigger_max) VALUES (22, 14, '', '');
 INSERT INTO related_to (id_answer, id_recommandation, trigger_value, trigger_max) VALUES (22, 16, '', '');
-INSERT INTO related_to (id_answer, id_recommandation, trigger_value, trigger_max) VALUES (23, 11, '', '');
 INSERT INTO related_to (id_answer, id_recommandation, trigger_value, trigger_max) VALUES (23, 11, '', '');
 INSERT INTO related_to (id_answer, id_recommandation, trigger_value, trigger_max) VALUES (24, 11, '', '');
 INSERT INTO related_to (id_answer, id_recommandation, trigger_value, trigger_max) VALUES (25, 11, '', '');
