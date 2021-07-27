@@ -6,7 +6,6 @@ const { setupRoutes } = require('./routes/routes-config');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// TODO: configure cors
 app.use(cors());
 
 setupRoutes(app);
@@ -18,7 +17,5 @@ connection.connect((err) => {
     console.log(`connected as id ' ${connection.threadId}`);
   }
 });
-
-// TODO: add your routes here
 
 module.exports = app;

@@ -9,7 +9,6 @@ funnelRouter.get('/', (req, res) => {
   })
     .catch((err) => {
       res.status(500).json({ message: `Error retrieving funnel: ${err.message}` });
-      console.error(err);
     });
 });
 
